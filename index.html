@@ -5,802 +5,819 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Mes révisions">
+<meta name="apple-mobile-web-app-title" content="Cahier de révisions">
 <meta name="format-detection" content="telephone=no">
-<title>Le cahier de Bérénice</title>
+<title>Cahier de révisions</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Rubik:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Nunito:wght@400;600;700&display=swap">
 <style>
-/* ------------------------------------------------------------------
-   Compatibilité iPad Air 1 / iOS 12.5.8 (Safari 12) :
-   pas de clamp(), pas de gap en flexbox, pas de inset, pas de :is().
-   prefers-color-scheme n'existe pas sur iOS 12 : le thème clair est le
-   thème par défaut complet, le bouton du bas force l'autre thème.
-   ------------------------------------------------------------------ */
+/* -------------------------------------------------------------------
+   Écrit pour l'iPad Air 1 (iOS 12.5.8 / Safari 12) :
+   ni clamp(), ni gap en flexbox, ni inset, ni ?. ni ?? ;
+   grid-gap doublé de gap ; champs à 24 px mini pour éviter le zoom.
+   Page volontairement mono-thème : c'est une feuille de cahier.
+   ------------------------------------------------------------------- */
 :root{
-  --fond:#F8FAF7; --carte:#FFFFFF; --carte2:#EFF4EF;
-  --encre:#15241B; --encre-doux:#5A6B60; --encre-pale:#8B9A90;
-  --vert:#1E6B49; --vert-clair:#DCEEE4;
-  --abricot:#D9631F; --abricot-clair:#FBE7D8;
-  --soleil:#EFB93F;
-  --rouge:#C2372C; --rouge-clair:#FAE2DF;
-  --trait:#DCE5DD; --ombre:rgba(21,36,27,.12);
+  --encre:#1F3A93; --encre-doux:#4A5FB3; --encre-pale:#8A98CE;
+  --papier:#FFFFFF; --seyes:#C9DCF3; --marge:#F2A7B0;
+  --bureau:#EDF1F8;
+  --ok:#237A4B; --ok-fond:#E2F3E9;
+  --nope:#CE2033; --nope-fond:#FBE6E8;
+  --crayon:#F5D76E;
 }
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="clair"]){
-    --fond:#0E1512; --carte:#16201B; --carte2:#1D2A23;
-    --encre:#E7F0EA; --encre-doux:#9FB2A6; --encre-pale:#74897D;
-    --vert:#4FBB86; --vert-clair:#12291E;
-    --abricot:#F08A4B; --abricot-clair:#2B1B10;
-    --soleil:#F0C464;
-    --rouge:#E4776A; --rouge-clair:#2E1917;
-    --trait:#26332B; --ombre:rgba(0,0,0,.5);
-  }
-}
-:root[data-theme="sombre"]{
-  --fond:#0E1512; --carte:#16201B; --carte2:#1D2A23;
-  --encre:#E7F0EA; --encre-doux:#9FB2A6; --encre-pale:#74897D;
-  --vert:#4FBB86; --vert-clair:#12291E;
-  --abricot:#F08A4B; --abricot-clair:#2B1B10;
-  --soleil:#F0C464;
-  --rouge:#E4776A; --rouge-clair:#2E1917;
-  --trait:#26332B; --ombre:rgba(0,0,0,.5);
-}
-
 *{box-sizing:border-box}
 [hidden]{display:none !important}
-html{-webkit-text-size-adjust:100%}
+html{-webkit-text-size-adjust:100%;height:100%}
 body{
-  margin:0; background:var(--fond); color:var(--encre);
-  font-family:"Rubik","Helvetica Neue",Helvetica,Arial,sans-serif;
-  font-size:17px; line-height:1.45;
-  -webkit-font-smoothing:antialiased;
+  margin:0;min-height:100%;background:var(--bureau);color:var(--encre);
+  font-family:"Nunito","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:17px;line-height:1.45;-webkit-font-smoothing:antialiased;
 }
-button,input{font-family:inherit;color:inherit;-webkit-appearance:none;appearance:none;border-radius:0}
-button{touch-action:manipulation;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-user-select:none;user-select:none;cursor:pointer}
+button,input,textarea{font-family:inherit;color:var(--encre);-webkit-appearance:none;appearance:none}
+button{touch-action:manipulation;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;cursor:pointer}
 :focus{outline:none}
-button:focus-visible,input:focus-visible{outline:3px solid var(--abricot);outline-offset:2px}
+button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--crayon);outline-offset:3px}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
 
-.page{max-width:760px;margin:0 auto;padding:18px 16px 40px}
-@media (min-width:700px){ body{font-size:18px} .page{padding:26px 22px 56px} }
+/* ------------- la feuille ------------- */
+.feuille{
+  max-width:640px;margin:0 auto;min-height:100vh;background:var(--papier);
+  background-image:
+    linear-gradient(90deg, transparent 0, transparent 46px, var(--marge) 46px, var(--marge) 48px, transparent 48px),
+    repeating-linear-gradient(0deg, transparent 0, transparent 31px, var(--seyes) 31px, var(--seyes) 32px);
+  border-left:1px solid var(--seyes);border-right:1px solid var(--seyes);
+  padding:26px 22px 70px 62px;
+}
+@media (max-width:520px){ .feuille{padding:20px 16px 60px 60px} }
 
-/* ---------------- barre du haut ---------------- */
-.barre{display:flex;align-items:center;flex-wrap:wrap;margin:0 -5px 16px}
-.barre > *{margin:5px}
-.barre .titre-ecran{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:24px;line-height:1.1;margin:0;flex:1 1 auto}
-.retour{
-  background:var(--carte);border:2px solid var(--trait);color:var(--encre);
-  padding:10px 16px;border-radius:12px;font-size:16px;font-weight:500;min-height:48px;
-}
-.retour:active{background:var(--carte2)}
-.compte{
-  font-size:15px;font-weight:500;color:var(--encre-doux);white-space:nowrap;
-  font-variant-numeric:tabular-nums;
-}
+h1{font-family:"Baloo 2",sans-serif;font-size:34px;line-height:1.05;margin:0 0 4px;font-weight:800;letter-spacing:-.4px}
+@media (min-width:600px){ h1{font-size:40px} }
+h2{font-family:"Baloo 2",sans-serif;font-size:23px;margin:22px 0 10px;font-weight:700;line-height:1.15}
+.sous{margin:0 0 24px;color:var(--encre-doux);font-size:17px}
+.indice{color:var(--encre-doux);font-size:15px;line-height:1.45}
 
-/* ---------------- accueil ---------------- */
-.entete{margin-bottom:22px}
-.entete h1{font-family:"Baloo 2",sans-serif;font-weight:700;margin:0;line-height:1.05;font-size:34px}
-@media (min-width:700px){ .entete h1{font-size:44px} }
-.entete p{margin:6px 0 0;color:var(--encre-doux);font-size:16px}
-.entete .echeance{
-  display:inline-block;margin-top:10px;background:var(--soleil);color:#3A2A05;
-  font-weight:600;font-size:15px;padding:5px 12px;border-radius:999px;
+/* ------------- boutons ------------- */
+button{
+  background:var(--papier);border:3px solid var(--encre);border-radius:14px;
+  padding:13px 18px;font-size:18px;font-weight:700;font-family:"Baloo 2",sans-serif;
+  box-shadow:3px 3px 0 var(--encre);transition:transform .08s,box-shadow .08s;
+  min-height:52px;
 }
-
-.tuiles{display:grid;grid-template-columns:1fr;grid-gap:14px;gap:14px}
-@media (min-width:640px){ .tuiles{grid-template-columns:1fr 1fr} }
-.tuile{
-  display:block;width:100%;text-align:left;background:var(--carte);
-  border:2px solid var(--trait);border-radius:18px;padding:20px 18px;
-  box-shadow:0 2px 0 var(--ombre);transition:border-color .15s,transform .1s;
+button:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--encre)}
+button.plein{background:var(--encre);color:#fff}
+button.grand{
+  display:block;width:100%;text-align:left;padding:20px 18px;font-size:23px;margin-bottom:15px;
 }
-.tuile:active{transform:translateY(1px)}
-.tuile .pastille{
-  display:inline-block;width:44px;height:44px;line-height:44px;text-align:center;
-  border-radius:14px;font-size:24px;margin-bottom:10px;background:var(--vert-clair);
+button.grand small{display:block;font-family:"Nunito",sans-serif;font-weight:600;font-size:15.5px;color:var(--encre-doux);margin-top:3px;white-space:normal}
+button.plein.grand small{color:#C9D5F5}
+button.centre{text-align:center}
+button.fantome{
+  border-color:transparent;box-shadow:none;background:transparent;color:var(--encre-doux);
+  padding:8px 4px;font-size:17px;min-height:44px;
 }
-.tuile.b .pastille{background:var(--abricot-clair)}
-.tuile.c .pastille{background:var(--carte2)}
-.tuile h2{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:23px;margin:0 0 3px}
-.tuile p{margin:0;color:var(--encre-doux);font-size:15.5px}
-.tuile .etat{display:block;margin-top:9px;font-size:14px;font-weight:600;color:var(--vert)}
-.tuile.grande{grid-column:1 / -1;border-color:var(--vert)}
-
-/* ---------------- progression ---------------- */
-.jauge{height:10px;background:var(--carte2);border-radius:999px;overflow:hidden;margin-bottom:18px}
-.jauge i{display:block;height:100%;background:var(--vert);width:0;transition:width .3s ease}
-
-/* ---------------- carte d'exercice ---------------- */
-.carte{
-  background:var(--carte);border:2px solid var(--trait);border-radius:20px;
-  padding:20px 18px;box-shadow:0 2px 0 var(--ombre);
-}
-@media (min-width:700px){ .carte{padding:26px 24px} }
-.carte.juste{border-color:var(--vert);background:var(--vert-clair)}
-.carte.faux{border-color:var(--rouge);background:var(--rouge-clair)}
-.consigne{margin:0 0 16px;font-size:17px;color:var(--encre-doux)}
+button.fantome:active{transform:none;box-shadow:none}
+button.danger{color:var(--nope);border-color:var(--nope);box-shadow:3px 3px 0 var(--nope)}
+button[disabled]{opacity:.4}
 
 .rangee{display:flex;flex-wrap:wrap;align-items:center;margin:-5px}
 .rangee > *{margin:5px}
 
-.btn{
-  border:2px solid var(--vert);background:var(--vert);color:#fff;
-  padding:13px 20px;border-radius:14px;font-size:17px;font-weight:600;min-height:52px;
-  transition:opacity .12s,transform .1s;
+/* ------------- carte d'exercice ------------- */
+.carte{
+  background:var(--papier);border:3px solid var(--encre);border-radius:18px;
+  padding:18px;margin:14px 0;box-shadow:4px 4px 0 var(--seyes);
 }
-.btn:active{transform:translateY(1px);opacity:.85}
-.btn[disabled]{opacity:.35}
-.btn.secondaire{background:var(--carte);color:var(--encre);border-color:var(--trait)}
-.btn.ecoute{background:var(--abricot);border-color:var(--abricot);font-size:20px;padding:15px 26px;min-height:60px}
-.btn.grand{width:100%;justify-content:center;text-align:center;font-size:19px;min-height:58px}
+.carte.juste{border-color:var(--ok);background:var(--ok-fond);box-shadow:4px 4px 0 rgba(35,122,75,.25)}
+.carte.faux{border-color:var(--nope);background:var(--nope-fond);box-shadow:4px 4px 0 rgba(206,32,51,.22)}
+.avancee{color:var(--encre-doux);font-size:16px;font-weight:700;margin-bottom:8px}
+.jauge{height:9px;background:var(--seyes);border-radius:999px;overflow:hidden;margin-bottom:14px}
+.jauge i{display:block;height:100%;background:var(--encre);width:0;transition:width .3s ease}
+
+input[type=text],input[type=tel]{
+  font-size:24px;font-family:"Baloo 2",sans-serif;font-weight:600;width:100%;
+  border:none;border-bottom:3px solid var(--encre);background:transparent;
+  padding:9px 4px;border-radius:0;min-height:52px;
+}
+input[type=text]:focus,input[type=tel]:focus{border-bottom-color:var(--crayon);background:rgba(245,215,110,.20)}
+input[disabled]{opacity:.7}
+textarea{
+  font-family:"Nunito",sans-serif;font-size:18px;width:100%;min-height:150px;line-height:30px;
+  border:3px dashed var(--encre);border-radius:14px;padding:10px 12px;background:transparent;
+}
+label.champ{display:block;font-size:14px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--encre-pale);margin:18px 0 4px}
+
+.accents{display:flex;flex-wrap:wrap;margin:10px -4px 0}
+.accents button{
+  margin:4px;min-width:46px;min-height:46px;padding:0;font-size:21px;
+  box-shadow:2px 2px 0 var(--encre);
+}
 
 .aide{
-  margin:16px 0 0;padding:14px 16px;background:var(--carte2);border-radius:14px;
-  font-family:"Baloo 2",sans-serif;font-weight:600;text-align:center;
+  margin:14px 0 0;padding:12px 14px;background:var(--bureau);border-radius:14px;text-align:center;
+  font-family:"Baloo 2",sans-serif;font-weight:700;
 }
-.aide .syllabes{font-size:30px;letter-spacing:.02em;color:var(--vert)}
-.aide .motentier{font-size:32px;letter-spacing:.01em}
-.aide small{display:block;font-family:"Rubik",sans-serif;font-weight:400;font-size:14px;color:var(--encre-doux);margin-top:4px}
+.aide .syl{font-size:28px;color:var(--encre)}
+.aide .entier{font-size:30px}
+.aide small{display:block;font-family:"Nunito",sans-serif;font-weight:600;font-size:14px;color:var(--encre-doux);margin-top:4px}
 
-label.etiq{display:block;font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--encre-pale);margin:20px 0 8px}
-input.reponse{
-  width:100%;border:2px solid var(--trait);background:var(--fond);border-radius:14px;
-  padding:14px 16px;font-size:26px;font-family:"Baloo 2",sans-serif;font-weight:600;
-  min-height:60px;
+.retour{font-size:22px;font-weight:800;font-family:"Baloo 2",sans-serif;margin:14px 0 2px;min-height:30px}
+.retour.bien{color:var(--ok)}
+.retour.mal{color:var(--nope)}
+.diff{margin:0 0 8px;font-size:15px;color:var(--encre-doux);font-weight:600}
+.diff b{
+  display:block;font-family:"Baloo 2",sans-serif;font-weight:700;font-size:27px;color:var(--encre);
+  letter-spacing:.02em;word-break:break-word;margin-top:1px;
 }
-input.reponse:focus{border-color:var(--abricot)}
-input.reponse[disabled]{opacity:.75}
+.diff .trop{color:var(--nope);text-decoration:line-through}
+.diff .oubli{color:var(--ok);border-bottom:4px solid var(--ok)}
+.diff .rien{color:var(--nope);opacity:.65}
 
-.clavier{display:flex;flex-wrap:wrap;margin:8px -4px 0}
-.clavier button{
-  margin:4px;min-width:48px;min-height:48px;border:2px solid var(--trait);background:var(--carte);
-  border-radius:12px;font-size:21px;font-family:"Baloo 2",sans-serif;font-weight:600;
-}
-.clavier button:active{background:var(--carte2)}
+.calcul{font-family:"Baloo 2",sans-serif;font-size:54px;font-weight:800;letter-spacing:-1px;margin:6px 0 4px;text-align:center}
+@media (min-width:600px){ .calcul{font-size:66px} }
+input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;display:block}
 
-/* ---------------- retour de correction ---------------- */
-.verdict{margin-top:18px}
-.verdict .titre{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:26px;margin:0 0 10px}
-.verdict .titre.ok{color:var(--vert)}
-.verdict .titre.ko{color:var(--rouge)}
-.ligne-diff{margin:0 0 8px;font-size:15px;color:var(--encre-doux)}
-.ligne-diff b{
-  display:block;font-family:"Baloo 2",sans-serif;font-weight:600;font-size:28px;
-  color:var(--encre);letter-spacing:.02em;word-break:break-word;margin-top:2px;
-}
-.ligne-diff .sup{color:var(--rouge);text-decoration:line-through}
-.ligne-diff .man{color:var(--vert);border-bottom:4px solid var(--vert)}
-.ligne-diff .vide{color:var(--rouge);opacity:.6}
+.phrase{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:25px;line-height:1.5;margin:4px 0 16px;text-align:center}
+.phrase .trou{display:inline-block;min-width:2.4em;border-bottom:4px solid var(--crayon);color:var(--encre-doux)}
+.duo{display:grid;grid-template-columns:1fr 1fr;grid-gap:12px;gap:12px}
+.duo button{font-size:28px;min-height:74px;padding:0}
+.truc{margin-top:16px;background:rgba(245,215,110,.28);border-left:5px solid var(--crayon);
+  padding:11px 13px;border-radius:0 12px 12px 0;font-size:15.5px}
+.truc b{display:block;font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--encre-doux);margin-bottom:2px}
+.truc em{font-style:normal;font-weight:700}
 
-.calcul{
-  font-family:"Rubik",sans-serif;font-weight:500;text-align:center;margin:6px 0 14px;
-  font-size:56px;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.01em;
-}
-@media (min-width:700px){ .calcul{font-size:72px} }
-.calcul .signe{color:var(--abricot)}
-input.chiffre{
-  width:100%;max-width:220px;margin:0 auto;display:block;text-align:center;
-  font-size:44px;font-family:"Rubik",sans-serif;font-weight:600;font-variant-numeric:tabular-nums;
-  border:2px solid var(--trait);background:var(--fond);border-radius:14px;padding:8px 10px;min-height:70px;
-}
-input.chiffre:focus{border-color:var(--abricot)}
-
-.phrase{
-  font-family:"Baloo 2",sans-serif;font-weight:600;font-size:26px;line-height:1.5;
-  margin:0 0 18px;text-align:center;
-}
-.phrase .trou{display:inline-block;min-width:2.6em;border-bottom:4px solid var(--abricot);color:var(--abricot)}
-.deux-choix{display:grid;grid-template-columns:1fr 1fr;grid-gap:12px;gap:12px}
-.deux-choix button{
-  font-family:"Baloo 2",sans-serif;font-weight:700;font-size:30px;min-height:76px;
-  border:2px solid var(--trait);background:var(--carte);border-radius:16px;
-}
-.deux-choix button:active{background:var(--carte2)}
-
-.astuce{
-  margin-top:16px;background:var(--abricot-clair);border-left:5px solid var(--abricot);
-  padding:12px 14px;border-radius:0 12px 12px 0;font-size:15.5px;
-}
-.astuce em{font-style:normal;font-weight:600;color:var(--encre)}
-.astuce b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--abricot);margin-bottom:3px}
-
-/* ---------------- bilan ---------------- */
-.bilan{text-align:center;padding:30px 20px}
-.bilan .medaille{font-size:64px;line-height:1;margin-bottom:6px}
-.bilan h2{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:32px;margin:0 0 6px}
-.bilan p{margin:0 0 4px;color:var(--encre-doux)}
-.bilan .chiffres{
-  display:flex;justify-content:center;flex-wrap:wrap;margin:20px -10px 22px;
-}
-.bilan .chiffres > div{margin:0 10px}
-.bilan .chiffres b{display:block;font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
-.bilan .chiffres span{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--encre-pale)}
-.liste-mots{display:flex;flex-wrap:wrap;justify-content:center;margin:0 -4px 18px}
-.liste-mots span{
-  margin:4px;background:var(--rouge-clair);color:var(--rouge);border:1px solid var(--rouge);
-  padding:6px 12px;border-radius:999px;font-size:15px;font-weight:500;
-}
-
-/* ---------------- réglages / pied ---------------- */
-.filtres{margin-top:20px}
-.filtres .etiq{margin-top:0}
-.puces{display:flex;flex-wrap:wrap;margin:-4px}
+/* ------------- puces ------------- */
+.puces{display:flex;flex-wrap:wrap;margin:0 -5px 10px}
 .puce{
-  margin:4px;border:2px solid var(--trait);background:var(--carte);color:var(--encre-doux);
-  padding:9px 15px;border-radius:999px;font-size:15.5px;font-weight:500;min-height:44px;
-  font-variant-numeric:tabular-nums;
+  margin:5px;border-radius:999px;padding:10px 16px;font-size:17px;box-shadow:2px 2px 0 var(--encre);
+  min-height:46px;
 }
-.puce.actif{background:var(--vert);border-color:var(--vert);color:#fff}
+.puce.choisie{background:var(--encre);color:#fff}
 
-.pied{margin-top:30px;padding-top:16px;border-top:1px solid var(--trait);
-  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between}
-.pied > *{margin:5px 0}
-.pied small{color:var(--encre-pale);font-size:13px}
-.pied button{background:none;border:2px solid var(--trait);color:var(--encre-doux);
-  padding:8px 14px;border-radius:999px;font-size:14px;min-height:44px}
-.pied input{border:2px solid var(--trait);background:var(--carte);border-radius:10px;
-  padding:8px 10px;font-size:16px;width:9em;min-height:44px}
+/* ------------- listes (zone des parents) ------------- */
+.parents{margin-top:40px;padding-top:14px;border-top:3px dashed var(--encre)}
+.ligne-liste{display:flex;justify-content:space-between;align-items:center;
+  padding:11px 0;border-bottom:2px solid var(--seyes)}
+.ligne-liste b{font-family:"Baloo 2",sans-serif;font-size:19px;font-weight:700;display:block}
+.ligne-liste span{color:var(--encre-doux);font-size:15px}
 
-.alerte{background:var(--rouge-clair);border-left:5px solid var(--rouge);padding:12px 14px;
-  border-radius:0 12px 12px 0;font-size:15.5px;margin-bottom:16px}
+/* ------------- résultat ------------- */
+.bilan{text-align:center;padding:26px 18px}
+.etoiles{font-size:40px;letter-spacing:8px;color:var(--crayon);margin-bottom:4px}
+.note{font-family:"Baloo 2",sans-serif;font-size:44px;font-weight:800;line-height:1}
+.aliste{display:flex;flex-wrap:wrap;justify-content:center;margin:14px -4px 4px}
+.aliste span{margin:4px;background:var(--nope-fond);color:var(--nope);border:2px solid var(--nope);
+  padding:5px 12px;border-radius:999px;font-size:15px;font-weight:700}
+
+.alerte{background:var(--nope-fond);border-left:5px solid var(--nope);padding:11px 13px;
+  border-radius:0 12px 12px 0;font-size:15.5px;margin-bottom:14px}
+
+.pastille{
+  position:fixed;left:50%;bottom:22px;margin-left:-140px;width:280px;text-align:center;
+  background:var(--encre);color:#fff;padding:12px 16px;border-radius:14px;font-weight:700;
+  font-family:"Baloo 2",sans-serif;font-size:17px;z-index:9;
+}
 </style>
 </head>
 <body>
-<div class="page">
+<div class="feuille">
 
-<!-- ==================== ACCUEIL ==================== -->
-<section class="ecran" id="ecran-accueil">
-  <div class="entete">
-    <h1 id="titre-accueil">Le cahier de Bérénice</h1>
-    <p>Mots à apprendre — CM1-CM2</p>
-    <span class="echeance">Pour le jeudi 10 septembre 2026</span>
-  </div>
+<!-- ================= ACCUEIL ================= -->
+<section class="ecran" id="ec-accueil">
+  <h1 id="titre-accueil">Cahier de révisions</h1>
+  <p class="sous">Choisis ce que tu veux réviser.</p>
 
-  <div class="tuiles">
-    <button class="tuile grande" type="button" id="vers-mots">
-      <span class="pastille">🔊</span>
-      <h2>Mes mots</h2>
-      <p>J'écoute le mot, je l'écris. Un mot raté revient plus tard, jusqu'à ce qu'il soit juste.</p>
-      <span class="etat" id="etat-mots">41 mots</span>
-    </button>
-    <button class="tuile b" type="button" id="vers-tables">
-      <span class="pastille">✖️</span>
-      <h2>Mes tables</h2>
-      <p>Même principe : un calcul raté revient jusqu'à ce qu'il soit juste.</p>
-      <span class="etat" id="etat-tables">tables de 2 à 9</span>
-    </button>
-    <button class="tuile c" type="button" id="vers-etest">
-      <span class="pastille">✏️</span>
-      <h2>et / est</h2>
-      <p>Le « Revoir » de la fiche : choisir entre <b>et</b> et <b>est</b> dans la phrase.</p>
-      <span class="etat">8 phrases</span>
-    </button>
-  </div>
+  <button class="grand plein" type="button" id="go-dictee">Dictée de mots<small>J'écoute le mot, je l'écris. Un mot raté revient jusqu'à ce qu'il soit juste.</small></button>
+  <button class="grand" type="button" id="go-tables">Tables de multiplication<small>Je choisis mes tables. Un calcul raté revient aussi.</small></button>
+  <button class="grand" type="button" id="go-etest">et / est<small>Le « Revoir » de la fiche : 8 phrases à trou.</small></button>
 
-  <div class="pied">
-    <input id="prenom" type="text" aria-label="Prénom" autocomplete="off" spellcheck="false" autocapitalize="words">
-    <small>Tout reste sur l'iPad. Aucune donnée n'est envoyée.</small>
-    <button type="button" id="bascule-theme">Thème</button>
+  <div class="parents">
+    <h2>Listes de mots</h2>
+    <div id="listes"></div>
+    <div class="rangee" style="margin-top:14px">
+      <button type="button" id="ajouter-liste">Ajouter une liste</button>
+      <button type="button" id="partager-listes">Envoyer sur l'iPad</button>
+    </div>
+    <p class="indice" style="margin-top:12px">Les listes restent enregistrées sur cet appareil. « Envoyer sur l'iPad » fabrique un lien qui contient les listes : ouvre-le sur l'iPad et elles s'y ajoutent.</p>
   </div>
 </section>
 
-<!-- ==================== MOTS ==================== -->
-<section class="ecran" id="ecran-mots" hidden>
-  <div class="barre">
-    <button class="retour" type="button" data-accueil>‹ Accueil</button>
-    <h2 class="titre-ecran">Mes mots</h2>
-    <span class="compte" id="compte-mots">0 / 41</span>
+<!-- ================= ÉDITION D'UNE LISTE ================= -->
+<section class="ecran" id="ec-edition" hidden>
+  <button class="fantome" type="button" data-retour>‹ Retour</button>
+  <h2 id="titre-edition">Nouvelle liste</h2>
+  <label class="champ" for="nom-liste">Nom de la liste</label>
+  <input type="text" id="nom-liste" placeholder="Mots pour jeudi 17 septembre" autocomplete="off" spellcheck="false">
+  <label class="champ" for="mots-liste">Les mots, un par ligne</label>
+  <textarea id="mots-liste" placeholder="un chimpanzé
+une branche
+franchir" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"></textarea>
+  <p class="indice">Écris les mots exactement comme sur la fiche, avec leur petit mot devant (un, une, le…). C'est cette orthographe qui servira de correction.</p>
+  <div class="rangee" style="margin-top:16px">
+    <button class="plein" type="button" id="enregistrer-liste">Enregistrer</button>
+    <button class="fantome" type="button" id="supprimer-liste" style="color:var(--nope)">Supprimer cette liste</button>
   </div>
-  <div class="jauge"><i id="jauge-mots"></i></div>
+</section>
 
+<!-- ================= CHOIX DE LA LISTE ================= -->
+<section class="ecran" id="ec-choix-liste" hidden>
+  <button class="fantome" type="button" data-retour>‹ Retour</button>
+  <h2>Quelle liste ?</h2>
+  <div id="choix-liste-items"></div>
+</section>
+
+<!-- ================= DICTÉE ================= -->
+<section class="ecran" id="ec-dictee" hidden>
+  <button class="fantome" type="button" data-retour>‹ Arrêter</button>
+  <div class="avancee" id="avancee-dictee">Mot 1</div>
+  <div class="jauge"><i id="jauge-dictee"></i></div>
   <div id="alerte-voix" class="alerte" hidden></div>
 
-  <div class="carte" id="carte-mots">
-    <p class="consigne">Écoute le mot, puis écris-le en entier, avec son petit mot devant (un, une, le…).</p>
+  <div class="carte" id="carte-dictee">
+    <button class="grand centre plein" type="button" id="ecouter">🔊 Écouter le mot</button>
     <div class="rangee">
-      <button class="btn ecoute" type="button" id="ecouter">🔊 Écouter</button>
-      <button class="btn secondaire" type="button" id="ecouter-lent">🐢 Plus lentement</button>
-      <button class="btn secondaire" type="button" id="syllabes">✂️ Syllabes</button>
-      <button class="btn secondaire" type="button" id="montrer">👁 Montrer</button>
+      <button type="button" id="ecouter-lent">🐢 Moins vite</button>
+      <button type="button" id="voir-syllabes">✂️ Syllabes</button>
+      <button type="button" id="voir-mot">👁 Montrer</button>
     </div>
+    <div class="aide" id="aide-dictee" hidden></div>
 
-    <div class="aide" id="aide-mot" hidden></div>
+    <label class="champ" for="saisie-mot">J'écris le mot</label>
+    <input type="text" id="saisie-mot" placeholder="écris le mot ici"
+           autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" enterkeyhint="done">
+    <div class="accents" id="accents"></div>
 
-    <label class="etiq" for="saisie-mot">J'écris le mot</label>
-    <input class="reponse" id="saisie-mot" type="text"
-           autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
-           enterkeyhint="done" placeholder="…">
-    <div class="clavier" id="clavier-accents"></div>
-
-    <div class="rangee" style="margin-top:16px">
-      <button class="btn grand" type="button" id="verifier-mot">Vérifier</button>
+    <div class="retour" id="retour-dictee"></div>
+    <div id="detail-dictee"></div>
+    <div class="rangee" style="margin-top:10px">
+      <button class="plein" type="button" id="verifier-mot">Vérifier</button>
     </div>
-
-    <div class="verdict" id="verdict-mot" hidden></div>
   </div>
 
-  <div class="filtres">
-    <label class="etiq">Ce que je révise</label>
+  <div id="filtre-categories" class="parents" style="margin-top:24px;border-top-style:solid;border-top-width:2px;border-top-color:var(--seyes)" hidden>
+    <h2 style="font-size:19px">Ce que je révise</h2>
     <div class="puces" id="puces-categories"></div>
   </div>
-
-  <div class="carte bilan" id="bilan-mots" hidden></div>
 </section>
 
-<!-- ==================== TABLES ==================== -->
-<section class="ecran" id="ecran-tables" hidden>
-  <div class="barre">
-    <button class="retour" type="button" data-accueil>‹ Accueil</button>
-    <h2 class="titre-ecran">Mes tables</h2>
-    <span class="compte" id="compte-tables">0 / 0</span>
-  </div>
+<!-- ================= TABLES : CHOIX ================= -->
+<section class="ecran" id="ec-tables-choix" hidden>
+  <button class="fantome" type="button" data-retour>‹ Retour</button>
+  <h2>Quelles tables ?</h2>
+  <div class="puces" id="puces-tables"></div>
+  <p class="indice">Chaque table choisie ajoute ses 10 calculs. La série s'arrête quand tous ont été justes.</p>
+  <button class="grand centre plein" type="button" id="lancer-tables" style="margin-top:18px">C'est parti</button>
+</section>
+
+<!-- ================= TABLES : JEU ================= -->
+<section class="ecran" id="ec-tables" hidden>
+  <button class="fantome" type="button" data-retour>‹ Arrêter</button>
+  <div class="avancee" id="avancee-tables">0 sur 0</div>
   <div class="jauge"><i id="jauge-tables"></i></div>
-
   <div class="carte" id="carte-tables">
-    <p class="consigne">Écris le résultat, puis appuie sur Vérifier.</p>
-    <p class="calcul" id="calcul">7 <span class="signe">×</span> 8</p>
-    <label class="etiq" for="saisie-calcul" style="text-align:center">Ma réponse</label>
-    <input class="chiffre" id="saisie-calcul" type="tel" pattern="[0-9]*"
-           autocomplete="off" autocorrect="off" spellcheck="false" maxlength="4" enterkeyhint="done">
-    <div class="rangee" style="margin-top:16px">
-      <button class="btn grand" type="button" id="verifier-calcul">Vérifier</button>
+    <p class="calcul" id="calcul">7 × 8</p>
+    <input type="tel" class="chiffre" id="saisie-calcul" pattern="[0-9]*" placeholder="?"
+           autocomplete="off" maxlength="4" enterkeyhint="done">
+    <div class="retour" id="retour-tables" style="text-align:center"></div>
+    <div class="rangee" style="margin-top:10px;justify-content:center">
+      <button class="plein" type="button" id="verifier-calcul">Vérifier</button>
     </div>
-    <div class="verdict" id="verdict-calcul" hidden></div>
   </div>
-
-  <div class="filtres">
-    <label class="etiq">Les tables que je révise</label>
-    <div class="puces" id="puces-tables"></div>
-  </div>
-
-  <div class="carte bilan" id="bilan-tables" hidden></div>
 </section>
 
-<!-- ==================== ET / EST ==================== -->
-<section class="ecran" id="ecran-etest" hidden>
-  <div class="barre">
-    <button class="retour" type="button" data-accueil>‹ Accueil</button>
-    <h2 class="titre-ecran">et / est</h2>
-    <span class="compte" id="compte-etest">0 / 8</span>
-  </div>
+<!-- ================= ET / EST ================= -->
+<section class="ecran" id="ec-etest" hidden>
+  <button class="fantome" type="button" data-retour>‹ Arrêter</button>
+  <div class="avancee" id="avancee-etest">0 sur 8</div>
   <div class="jauge"><i id="jauge-etest"></i></div>
-
   <div class="carte" id="carte-etest">
-    <p class="consigne">Quel mot faut-il écrire dans le trou&nbsp;?</p>
     <p class="phrase" id="phrase-etest"></p>
-    <div class="deux-choix">
+    <div class="duo">
       <button type="button" data-choix="et">et</button>
       <button type="button" data-choix="est">est</button>
     </div>
-    <div class="astuce">
-      <b>Le truc pour ne pas se tromper</b>
-      Si on peut remplacer par <em>était</em>, c'est <em>est</em>. Si on peut remplacer par <em>et puis</em>, c'est <em>et</em>.
+    <div class="retour" id="retour-etest"></div>
+    <div id="detail-etest"></div>
+    <div class="truc">
+      <b>Le truc</b>
+      Si on peut dire <em>était</em> à la place, c'est <em>est</em>. Si on peut dire <em>et puis</em>, c'est <em>et</em>.
     </div>
-    <div class="verdict" id="verdict-etest" hidden></div>
   </div>
+</section>
 
-  <div class="carte bilan" id="bilan-etest" hidden></div>
+<!-- ================= RÉSULTAT ================= -->
+<section class="ecran" id="ec-resultat" hidden>
+  <div class="carte bilan" id="bilan"></div>
 </section>
 
 </div>
+<div class="pastille" id="pastille" hidden></div>
 
 <script>
 (function(){
 "use strict";
 
-/* =========================================================
-   Petits utilitaires
-   ========================================================= */
+/* =====================================================================
+   Outils
+   ===================================================================== */
 function $(id){ return document.getElementById(id); }
-function melanger(t){
-  var i,j,x;
-  for(i=t.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); x=t[i]; t[i]=t[j]; t[j]=x; }
-  return t;
-}
-function vider(el){ while(el.firstChild) el.removeChild(el.firstChild); }
-function creer(balise, classe, texte){
+function vider(e){ while(e.firstChild) e.removeChild(e.firstChild); }
+function creer(balise,classe,texte){
   var e=document.createElement(balise);
   if(classe) e.className=classe;
   if(texte!==undefined && texte!==null) e.appendChild(document.createTextNode(texte));
   return e;
 }
+function texte(el,t){ vider(el); el.appendChild(document.createTextNode(t)); }
+function melanger(t){
+  var i,j,x;
+  for(i=t.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); x=t[i]; t[i]=t[j]; t[j]=x; }
+  return t;
+}
 var Memoire={
-  lire:function(cle,defaut){
-    try{ var v=localStorage.getItem("berenice."+cle); return v===null?defaut:JSON.parse(v); }
-    catch(e){ return defaut; }
-  },
-  ecrire:function(cle,valeur){
-    try{ localStorage.setItem("berenice."+cle, JSON.stringify(valeur)); }catch(e){}
-  }
+  lire:function(c,d){ try{ var v=localStorage.getItem("cahier."+c); return v===null?d:JSON.parse(v); }catch(e){ return d; } },
+  ecrire:function(c,v){ try{ localStorage.setItem("cahier."+c,JSON.stringify(v)); }catch(e){} }
 };
+var minuteurPastille=null;
+function pastille(msg){
+  var p=$("pastille"); texte(p,msg); p.hidden=false;
+  if(minuteurPastille) window.clearTimeout(minuteurPastille);
+  minuteurPastille=window.setTimeout(function(){ p.hidden=true; },2400);
+}
+function duree(s){
+  var m=Math.floor(s/60), r=s%60;
+  return m ? (m+" min "+(r<10?"0":"")+r+" s") : (r+" s");
+}
 
-/* =========================================================
-   Les mots de la fiche du 10 septembre 2026
-   s = découpage en syllabes (aide affichée à la demande)
-   ========================================================= */
-var MOTS=[
- {c:"Noms",m:"un chimpanzé",s:"chim·pan·zé"},
- {c:"Noms",m:"un primate",s:"pri·mate"},
- {c:"Noms",m:"un inventeur",s:"in·ven·teur"},
- {c:"Noms",m:"un singe",s:"singe"},
- {c:"Noms",m:"un outil",s:"ou·til"},
- {c:"Noms",m:"un insecte",s:"in·secte"},
- {c:"Noms",m:"une séance",s:"sé·ance"},
- {c:"Noms",m:"une branche",s:"branche"},
- {c:"Noms",m:"un paon",s:"paon"},
- {c:"Noms",m:"une récompense",s:"ré·com·pense"},
- {c:"Noms",m:"une fourmi",s:"four·mi"},
- {c:"Noms",m:"un fruit",s:"fruit"},
- {c:"Noms",m:"le colobe",s:"co·lobe"},
- {c:"Noms",m:"un cri",s:"cri"},
- {c:"Noms",m:"un camp",s:"camp"},
- {c:"Noms",m:"un bâton",s:"bâ·ton"},
- {c:"Noms",m:"un obstacle",s:"obs·tacle"},
- {c:"Noms",m:"un ruisseau",s:"ruis·seau"},
- {c:"Adjectifs",m:"omnivore",s:"om·ni·vore"},
- {c:"Adjectifs",m:"bavard",s:"ba·vard"},
- {c:"Adjectifs",m:"rouge",s:"rouge"},
- {c:"Adjectifs",m:"petit",s:"pe·tit"},
- {c:"Adjectifs",m:"intelligent",s:"in·tel·li·gent"},
- {c:"Adjectifs",m:"important",s:"im·por·tant"},
- {c:"Verbes",m:"communiquer",s:"com·mu·ni·quer"},
- {c:"Verbes",m:"entrer",s:"en·trer"},
- {c:"Verbes",m:"manger",s:"man·ger"},
- {c:"Verbes",m:"franchir",s:"fran·chir"},
- {c:"Verbes",m:"inventer",s:"in·ven·ter"},
- {c:"Verbes",m:"tomber",s:"tom·ber"},
- {c:"Verbes",m:"fabriquer",s:"fa·bri·quer"},
- {c:"Verbes",m:"utiliser",s:"u·ti·li·ser"},
- {c:"Verbes",m:"tenter de",s:"ten·ter de"},
- {c:"Verbes",m:"il prend",s:"il prend"},
- {c:"Mots invariables",m:"aucun",s:"au·cun"},
- {c:"Mots invariables",m:"souvent",s:"sou·vent"},
- {c:"Mots invariables",m:"mais",s:"mais"},
- {c:"Mots invariables",m:"également",s:"é·ga·le·ment"},
- {c:"Mots invariables",m:"soudain",s:"sou·dain"},
- {c:"Mots invariables",m:"sans",s:"sans"},
- {c:"Mots invariables",m:"très",s:"très"}
-];
-var CATEGORIES=["Noms","Adjectifs","Verbes","Mots invariables"];
-
-var ET_EST=[
- {avant:"Le chimpanzé",apres:"très intelligent.",r:"est"},
- {avant:"Il prend un bâton",apres:"franchit le ruisseau.",r:"et"},
- {avant:"La fourmi",apres:"un insecte.",r:"est"},
- {avant:"Il utilise un outil",apres:"une branche.",r:"et"},
- {avant:"Ce singe",apres:"omnivore.",r:"est"},
- {avant:"Il tente de manger",apres:"il tombe.",r:"et"},
- {avant:"Le colobe",apres:"un primate.",r:"est"},
- {avant:"Elle invente",apres:"fabrique un outil.",r:"et"}
-];
-
-/* =========================================================
+/* =====================================================================
    Écrans
-   ========================================================= */
-var ECRANS=["ecran-accueil","ecran-mots","ecran-tables","ecran-etest"];
-function montrer(id){
-  for(var i=0;i<ECRANS.length;i++) $(ECRANS[i]).hidden = (ECRANS[i]!==id);
+   ===================================================================== */
+var ECRANS=["ec-accueil","ec-edition","ec-choix-liste","ec-dictee","ec-tables-choix","ec-tables","ec-etest","ec-resultat"];
+function ecran(id){
+  for(var i=0;i<ECRANS.length;i++) $(ECRANS[i]).hidden=(ECRANS[i]!==id);
   try{ window.scrollTo(0,0); }catch(e){}
 }
-var boutonsRetour=document.querySelectorAll("[data-accueil]");
-for(var br=0;br<boutonsRetour.length;br++){
-  boutonsRetour[br].onclick=function(){ arreterVoix(); montrer("ecran-accueil"); rafraichirAccueil(); };
-}
+(function(){
+  var b=document.querySelectorAll("[data-retour]");
+  for(var i=0;i<b.length;i++) b[i].onclick=function(){ stopVoix(); ecran("ec-accueil"); dessinerListes(); };
+})();
 
-/* Prénom */
-var prenom=Memoire.lire("prenom","Bérénice");
-$("prenom").value=prenom;
-function appliquerPrenom(){
-  $("titre-accueil").firstChild.nodeValue = prenom ? ("Le cahier de "+prenom) : "Mon cahier";
-}
-$("prenom").oninput=function(){
-  prenom=this.value.replace(/\s+/g," ").replace(/^\s/,"");
-  Memoire.ecrire("prenom",prenom); appliquerPrenom();
+/* =====================================================================
+   Les listes de mots
+   La liste de la fiche porte le découpage en syllabes et les catégories,
+   saisis à la main. Une liste ajoutée ici n'a ni l'un ni l'autre : le
+   bouton Syllabes disparaît alors, plutôt que d'inventer un découpage.
+   ===================================================================== */
+var LISTE_FICHE={
+  id:"fiche-2026-09-10",
+  nom:"Mots pour jeudi 10 septembre 2026",
+  mots:[
+   {m:"un chimpanzé",s:"chim·pan·zé",c:"Noms"},
+   {m:"un primate",s:"pri·mate",c:"Noms"},
+   {m:"un inventeur",s:"in·ven·teur",c:"Noms"},
+   {m:"un singe",s:"singe",c:"Noms"},
+   {m:"un outil",s:"ou·til",c:"Noms"},
+   {m:"un insecte",s:"in·secte",c:"Noms"},
+   {m:"une séance",s:"sé·ance",c:"Noms"},
+   {m:"une branche",s:"branche",c:"Noms"},
+   {m:"un paon",s:"paon",c:"Noms"},
+   {m:"une récompense",s:"ré·com·pense",c:"Noms"},
+   {m:"une fourmi",s:"four·mi",c:"Noms"},
+   {m:"un fruit",s:"fruit",c:"Noms"},
+   {m:"le colobe",s:"co·lobe",c:"Noms"},
+   {m:"un cri",s:"cri",c:"Noms"},
+   {m:"un camp",s:"camp",c:"Noms"},
+   {m:"un bâton",s:"bâ·ton",c:"Noms"},
+   {m:"un obstacle",s:"obs·tacle",c:"Noms"},
+   {m:"un ruisseau",s:"ruis·seau",c:"Noms"},
+   {m:"omnivore",s:"om·ni·vore",c:"Adjectifs"},
+   {m:"bavard",s:"ba·vard",c:"Adjectifs"},
+   {m:"rouge",s:"rouge",c:"Adjectifs"},
+   {m:"petit",s:"pe·tit",c:"Adjectifs"},
+   {m:"intelligent",s:"in·tel·li·gent",c:"Adjectifs"},
+   {m:"important",s:"im·por·tant",c:"Adjectifs"},
+   {m:"communiquer",s:"com·mu·ni·quer",c:"Verbes"},
+   {m:"entrer",s:"en·trer",c:"Verbes"},
+   {m:"manger",s:"man·ger",c:"Verbes"},
+   {m:"franchir",s:"fran·chir",c:"Verbes"},
+   {m:"inventer",s:"in·ven·ter",c:"Verbes"},
+   {m:"tomber",s:"tom·ber",c:"Verbes"},
+   {m:"fabriquer",s:"fa·bri·quer",c:"Verbes"},
+   {m:"utiliser",s:"u·ti·li·ser",c:"Verbes"},
+   {m:"tenter de",s:"ten·ter de",c:"Verbes"},
+   {m:"il prend",s:"il prend",c:"Verbes"},
+   {m:"aucun",s:"au·cun",c:"Mots invariables"},
+   {m:"souvent",s:"sou·vent",c:"Mots invariables"},
+   {m:"mais",s:"mais",c:"Mots invariables"},
+   {m:"également",s:"é·ga·le·ment",c:"Mots invariables"},
+   {m:"soudain",s:"sou·dain",c:"Mots invariables"},
+   {m:"sans",s:"sans",c:"Mots invariables"},
+   {m:"très",s:"très",c:"Mots invariables"}
+  ]
 };
-appliquerPrenom();
+var listes=[];
 
-/* Thème : sur iOS 12, prefers-color-scheme n'existe pas, ce bouton fait tout. */
-var THEMES=["auto","clair","sombre"];
-var NOMS_THEME={auto:"Thème : auto",clair:"Thème : clair",sombre:"Thème : sombre"};
-var theme=Memoire.lire("theme","auto");
-function appliquerTheme(){
-  if(theme==="auto") document.documentElement.removeAttribute("data-theme");
-  else document.documentElement.setAttribute("data-theme",theme);
-  vider($("bascule-theme"));
-  $("bascule-theme").appendChild(document.createTextNode(NOMS_THEME[theme]));
+function copieFiche(){
+  return JSON.parse(JSON.stringify(LISTE_FICHE));
 }
-$("bascule-theme").onclick=function(){
-  var i=THEMES.indexOf(theme);
-  theme=THEMES[(i+1)%THEMES.length];
-  Memoire.ecrire("theme",theme); appliquerTheme();
-};
-appliquerTheme();
+function chargerListes(){
+  var enregistrees=Memoire.lire("listes",null);
+  listes = (enregistrees && enregistrees.length) ? enregistrees : [copieFiche()];
+  importerDepuisLien();
+}
+function sauverListes(){ Memoire.ecrire("listes",listes); }
 
-/* =========================================================
-   Synthèse vocale (iOS : la première lecture doit suivre un appui)
-   ========================================================= */
-var tts=("speechSynthesis" in window), voixFr=null, voixPrete=false;
-function chargerVoix(){
+/* Lien de partage : #l=<base64 des listes>, ajouté sans écraser l'existant */
+function importerDepuisLien(){
+  var m=(window.location.hash||"").match(/#l=(.+)$/);
+  if(!m) return;
+  var recues;
+  try{ recues=JSON.parse(decodeURIComponent(escape(window.atob(m[1])))); }
+  catch(e){ pastille("Ce lien de listes est abîmé."); return; }
+  if(!recues || !recues.length) return;
+  var ajoutees=0,i,j,doublon;
+  for(i=0;i<recues.length;i++){
+    if(!recues[i] || !recues[i].mots || !recues[i].mots.length) continue;
+    doublon=false;
+    for(j=0;j<listes.length;j++) if(listes[j].nom===recues[i].nom) doublon=true;
+    if(!doublon){ listes.push(recues[i]); ajoutees++; }
+  }
+  sauverListes();
+  try{ window.history.replaceState(null,"",window.location.pathname+window.location.search); }
+  catch(e){ window.location.hash=""; }
+  pastille(ajoutees ? (ajoutees+" liste"+(ajoutees>1?"s ajoutées":" ajoutée")) : "Ces listes sont déjà là.");
+}
+function lienDePartage(){
+  var data=window.btoa(unescape(encodeURIComponent(JSON.stringify(listes))));
+  return window.location.href.split("#")[0]+"#l="+data;
+}
+$("partager-listes").onclick=function(){
+  var url=lienDePartage();
+  if(url.length>12000){ pastille("Trop de mots pour un lien. Supprime une liste."); return; }
+  if(navigator.share){ navigator.share({title:"Cahier de révisions",url:url})["catch"](function(){}); return; }
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(url).then(function(){ pastille("Lien copié."); },function(){ window.prompt("Copie ce lien :",url); });
+    return;
+  }
+  window.prompt("Copie ce lien :",url);
+};
+
+function dessinerListes(){
+  var box=$("listes"); vider(box);
+  if(!listes.length){
+    box.appendChild(creer("p","indice","Aucune liste. Ajoute la première."));
+    return;
+  }
+  for(var i=0;i<listes.length;i++){
+    (function(indice,liste){
+      var d=creer("div","ligne-liste");
+      var g=creer("div");
+      g.appendChild(creer("b",null,liste.nom));
+      g.appendChild(creer("span",null,liste.mots.length+" mots"));
+      var b=creer("button","fantome","Modifier"); b.type="button";
+      b.onclick=function(){ ouvrirEdition(indice); };
+      d.appendChild(g); d.appendChild(b); box.appendChild(d);
+    })(i,listes[i]);
+  }
+}
+
+/* ---- édition ---- */
+var indiceEdition=-1;
+function ouvrirEdition(i){
+  indiceEdition=i;
+  var neuve=(i<0);
+  texte($("titre-edition"), neuve?"Nouvelle liste":"Modifier la liste");
+  $("nom-liste").value = neuve?"":listes[i].nom;
+  var lignes=[],k;
+  if(!neuve) for(k=0;k<listes[i].mots.length;k++) lignes.push(listes[i].mots[k].m);
+  $("mots-liste").value=lignes.join("\n");
+  $("supprimer-liste").hidden=neuve;
+  ecran("ec-edition");
+}
+$("ajouter-liste").onclick=function(){ ouvrirEdition(-1); };
+$("enregistrer-liste").onclick=function(){
+  var nom=$("nom-liste").value.replace(/\s+/g," ").replace(/^ | $/g,"") || "Sans nom";
+  var brut=$("mots-liste").value.split("\n"), mots=[],i,t;
+  for(i=0;i<brut.length;i++){
+    t=brut[i].replace(/\s+/g," ").replace(/^ | $/g,"");
+    if(t) mots.push({m:t});
+  }
+  if(!mots.length){ pastille("Écris au moins un mot."); return; }
+  if(indiceEdition<0) listes.push({id:"l"+(new Date()).getTime(),nom:nom,mots:mots});
+  else { listes[indiceEdition].nom=nom; listes[indiceEdition].mots=mots; }
+  sauverListes(); dessinerListes(); ecran("ec-accueil");
+  pastille("Liste enregistrée.");
+};
+$("supprimer-liste").onclick=function(){
+  if(indiceEdition<0) return;
+  if(!window.confirm("Supprimer « "+listes[indiceEdition].nom+" » ?")) return;
+  listes.splice(indiceEdition,1);
+  if(!listes.length) listes.push(copieFiche());
+  sauverListes(); dessinerListes(); ecran("ec-accueil");
+};
+
+/* =====================================================================
+   Voix (iOS : la lecture doit partir d'un appui)
+   ===================================================================== */
+var tts=("speechSynthesis" in window), voixFr=null;
+function choisirVoix(){
   if(!tts) return;
-  var toutes=[];
-  try{ toutes=window.speechSynthesis.getVoices()||[]; }catch(e){ toutes=[]; }
-  var fr=[],i;
-  for(i=0;i<toutes.length;i++) if(/^fr/i.test(toutes[i].lang)) fr.push(toutes[i]);
-  voixFr = fr.length ? fr[0] : null;
-  voixPrete = toutes.length>0;
-  if(voixPrete && !voixFr) prevenirVoix("Aucune voix française n'est installée sur cet iPad. Le bouton « 👁 Montrer » affiche le mot : on peut le lire, le cacher, puis l'écrire de mémoire.");
-  else prevenirVoix(null);
+  var v=[];
+  try{ v=window.speechSynthesis.getVoices()||[]; }catch(e){}
+  var exacte=null,large=null,i;
+  for(i=0;i<v.length;i++){
+    if(!exacte && /^fr[-_]FR/i.test(v[i].lang)) exacte=v[i];
+    if(!large && /^fr/i.test(v[i].lang)) large=v[i];
+  }
+  voixFr=exacte||large||null;
+  if(v.length && !voixFr) alerteVoix("Aucune voix française sur cet appareil. Le bouton « 👁 Montrer » affiche le mot : on le lit, on le cache, puis on l'écrit.");
+  else alerteVoix(null);
 }
-function prevenirVoix(msg){
+function alerteVoix(msg){
   var b=$("alerte-voix");
   if(!msg){ b.hidden=true; return; }
-  vider(b); b.appendChild(document.createTextNode(msg)); b.hidden=false;
+  texte(b,msg); b.hidden=false;
 }
 if(tts){
-  chargerVoix();
-  if(typeof window.speechSynthesis.addEventListener==="function")
-    window.speechSynthesis.addEventListener("voiceschanged",chargerVoix);
-  else window.speechSynthesis.onvoiceschanged=chargerVoix;
-}else{
-  prevenirVoix("Ce navigateur ne sait pas lire les mots à voix haute. Le bouton « 👁 Montrer » affiche le mot : on le lit, on le cache, puis on l'écrit.");
-}
-function arreterVoix(){ if(tts){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
-function dire(texte,vitesse){
-  if(!tts) return;
+  choisirVoix();
+  if(typeof window.speechSynthesis.addEventListener==="function") window.speechSynthesis.addEventListener("voiceschanged",choisirVoix);
+  else window.speechSynthesis.onvoiceschanged=choisirVoix;
+}else alerteVoix("Ce navigateur ne lit pas à voix haute. Utilise « 👁 Montrer » : on lit le mot, on le cache, puis on l'écrit.");
+function stopVoix(){ if(tts){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
+function dire(t,vitesse){
+  if(!tts){ pastille("Pas de voix sur cet appareil."); return; }
   try{
     window.speechSynthesis.cancel();
-    var u=new SpeechSynthesisUtterance(texte);
+    var u=new SpeechSynthesisUtterance(t);
     u.lang="fr-FR"; u.rate=vitesse; u.pitch=1;
     if(voixFr) u.voice=voixFr;
     window.speechSynthesis.speak(u);
   }catch(e){}
 }
 
-/* =========================================================
+/* =====================================================================
    Comparaison lettre par lettre
-   ========================================================= */
+   ===================================================================== */
 function normaliser(s){
-  return String(s)
-    .replace(/[’‘ʼ]/g,"'")
-    .replace(/[  ]/g," ")
-    .toLowerCase().trim().replace(/\s+/g," ");
+  return String(s).replace(/[’‘ʼ]/g,"'").replace(/[  ]/g," ")
+    .toLowerCase().replace(/^\s+|\s+$/g,"").replace(/\s+/g," ");
 }
-function diffLettres(attendu,saisi){
+function comparerLettres(attendu,saisi){
   var a=normaliser(attendu).split(""), b=normaliser(saisi).split("");
-  var origA=attendu.split(""), origB=saisi.split("");
-  var n=a.length,m=b.length,i,j;
-  var dp=[]; for(i=0;i<=n;i++) dp.push(new Int32Array(m+1));
+  var oa=attendu.split(""), ob=saisi.split("");
+  var n=a.length,m=b.length,i,j,dp=[];
+  for(i=0;i<=n;i++) dp.push(new Int32Array(m+1));
   for(i=n-1;i>=0;i--) for(j=m-1;j>=0;j--)
-    dp[i][j] = (a[i]===b[j]) ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j],dp[i][j+1]);
+    dp[i][j]=(a[i]===b[j])?dp[i+1][j+1]+1:Math.max(dp[i+1][j],dp[i][j+1]);
   var ops=[]; i=0; j=0;
   while(i<n&&j<m){
-    if(a[i]===b[j]){ ops.push({t:"ok",ca:origA[i],cs:origB[j]}); i++; j++; }
-    else if(dp[i+1][j]>=dp[i][j+1]){ ops.push({t:"man",ca:origA[i]}); i++; }
-    else { ops.push({t:"sup",cs:origB[j]}); j++; }
+    if(a[i]===b[j]){ ops.push({t:"ok",a:oa[i],b:ob[j]}); i++; j++; }
+    else if(dp[i+1][j]>=dp[i][j+1]){ ops.push({t:"oubli",a:oa[i]}); i++; }
+    else { ops.push({t:"trop",b:ob[j]}); j++; }
   }
-  while(i<n){ ops.push({t:"man",ca:origA[i]}); i++; }
-  while(j<m){ ops.push({t:"sup",cs:origB[j]}); j++; }
+  while(i<n){ ops.push({t:"oubli",a:oa[i]}); i++; }
+  while(j<m){ ops.push({t:"trop",b:ob[j]}); j++; }
   return ops;
 }
-function ligneDiff(intitule,ops,cote){
-  var p=creer("p","ligne-diff",intitule);
-  var b=creer("b");
-  var k,o,sp;
+function ligne(intitule,ops,cote){
+  var p=creer("p","diff",intitule), b=creer("b"), k,o;
   for(k=0;k<ops.length;k++){
     o=ops[k];
     if(cote==="saisi"){
-      if(o.t==="ok") b.appendChild(document.createTextNode(o.cs));
-      else if(o.t==="sup"){ sp=creer("span","sup",o.cs); b.appendChild(sp); }
+      if(o.t==="ok") b.appendChild(document.createTextNode(o.b));
+      else if(o.t==="trop") b.appendChild(creer("span","trop",o.b));
     }else{
-      if(o.t==="ok") b.appendChild(document.createTextNode(o.ca));
-      else if(o.t==="man"){ sp=creer("span","man",o.ca); b.appendChild(sp); }
+      if(o.t==="ok") b.appendChild(document.createTextNode(o.a));
+      else if(o.t==="oubli") b.appendChild(creer("span","oubli",o.a));
     }
   }
-  if(!b.firstChild) b.appendChild(creer("span","vide","(rien)"));
+  if(!b.firstChild) b.appendChild(creer("span","rien","(rien)"));
   p.appendChild(b);
   return p;
 }
 
-/* =========================================================
-   File d'attente commune : un item raté revient plus loin
-   ========================================================= */
+/* =====================================================================
+   File d'attente : un item raté revient trois places plus loin,
+   et la série ne se termine que quand tout a été réussi.
+   ===================================================================== */
 function File(items){
   this.file=melanger(items.slice());
   this.total=items.length;
-  this.reussis=0;
-  this.rates={};      /* clé -> nombre d'erreurs */
-  this.nbErreurs=0;
+  this.reussis=0; this.erreurs=0; this.rates={};
   this.debut=(new Date()).getTime();
 }
 File.prototype.courant=function(){ return this.file[0]; };
-File.prototype.juste=function(){
-  this.file.shift();
-  this.reussis++;
-  return this.file.length===0;
-};
+File.prototype.juste=function(){ this.file.shift(); this.reussis++; return this.file.length===0; };
 File.prototype.faux=function(cle){
-  var item=this.file.shift();
-  this.nbErreurs++;
-  this.rates[cle]=(this.rates[cle]||0)+1;
-  var pos=Math.min(3,this.file.length);
-  this.file.splice(pos,0,item);
-  return false;
+  var it=this.file.shift();
+  this.erreurs++; this.rates[cle]=(this.rates[cle]||0)+1;
+  this.file.splice(Math.min(3,this.file.length),0,it);
 };
-File.prototype.restants=function(){ return this.file.length; };
-File.prototype.secondes=function(){
-  return Math.round(((new Date()).getTime()-this.debut)/1000);
-};
-function duree(s){
-  var m=Math.floor(s/60), r=s%60;
-  return m ? (m+" min "+(r<10?"0":"")+r+" s") : (r+" s");
-}
-
-/* =========================================================
-   EXERCICE 1 — LES MOTS
-   ========================================================= */
-var categoriesActives=Memoire.lire("categories",CATEGORIES.slice());
-if(!categoriesActives || !categoriesActives.length) categoriesActives=CATEGORIES.slice();
-var fileMots=null, motCorrige=false;
-
-function motsChoisis(){
-  var r=[],i;
-  for(i=0;i<MOTS.length;i++) if(categoriesActives.indexOf(MOTS[i].c)>=0) r.push(MOTS[i]);
+File.prototype.listeRates=function(){
+  var r=[],k;
+  for(k in this.rates) if(this.rates.hasOwnProperty(k)) r.push(k);
   return r;
+};
+File.prototype.secondes=function(){ return Math.round(((new Date()).getTime()-this.debut)/1000); };
+
+/* =====================================================================
+   Résultat
+   ===================================================================== */
+var refaire=null;
+function resultat(titre,file,libelleUnite,actionRefaire){
+  var b=$("bilan"); vider(b);
+  var e=file.erreurs;
+  b.appendChild(creer("div","etoiles", e===0?"★★★":(e<=2?"★★☆":"★☆☆")));
+  b.appendChild(creer("h2",null,titre));
+  b.appendChild(creer("div","note",file.total+" / "+file.total));
+  b.appendChild(creer("p","indice",
+    "Tout est juste, avec "+e+" erreur"+(e>1?"s":"")+" en chemin, en "+duree(file.secondes())+"."));
+  var rates=file.listeRates();
+  if(rates.length){
+    b.appendChild(creer("p","indice","À revoir demain :"));
+    var l=creer("div","aliste"),k;
+    for(k=0;k<rates.length;k++) l.appendChild(creer("span",null,rates[k]));
+    b.appendChild(l);
+  }
+  var r=creer("div","rangee"); r.style.justifyContent="center"; r.style.marginTop="18px";
+  if(rates.length && actionRefaire){
+    var b1=creer("button","plein","Refaire les "+rates.length+" "+libelleUnite); b1.type="button";
+    b1.onclick=function(){ actionRefaire(rates); };
+    r.appendChild(b1);
+  }
+  var b2=creer("button",null,"Accueil"); b2.type="button";
+  b2.onclick=function(){ ecran("ec-accueil"); dessinerListes(); };
+  r.appendChild(b2); b.appendChild(r);
+  ecran("ec-resultat");
 }
-function construireCategories(){
-  var z=$("puces-categories"); vider(z);
-  var tout=creer("button","puce"+(categoriesActives.length===CATEGORIES.length?" actif":""),"Tout");
+
+/* =====================================================================
+   DICTÉE
+   ===================================================================== */
+var fileMots=null, listeCourante=null, motCorrige=false;
+var categoriesActives=null;
+
+function categoriesDe(liste){
+  var c=[],i;
+  for(i=0;i<liste.mots.length;i++)
+    if(liste.mots[i].c && c.indexOf(liste.mots[i].c)<0) c.push(liste.mots[i].c);
+  return c;
+}
+function motsDe(liste){
+  if(!categoriesActives) return liste.mots.slice();
+  var r=[],i;
+  for(i=0;i<liste.mots.length;i++)
+    if(!liste.mots[i].c || categoriesActives.indexOf(liste.mots[i].c)>=0) r.push(liste.mots[i]);
+  return r.length?r:liste.mots.slice();
+}
+$("go-dictee").onclick=function(){
+  if(listes.length===1){ demarrerDictee(listes[0]); return; }
+  var box=$("choix-liste-items"); vider(box);
+  for(var i=0;i<listes.length;i++){
+    (function(l){
+      var b=creer("button","grand"); b.type="button";
+      b.appendChild(document.createTextNode(l.nom));
+      b.appendChild(creer("small",null,l.mots.length+" mots"));
+      b.onclick=function(){ demarrerDictee(l); };
+      box.appendChild(b);
+    })(listes[i]);
+  }
+  ecran("ec-choix-liste");
+};
+function demarrerDictee(liste){
+  listeCourante=liste;
+  var cats=categoriesDe(liste);
+  categoriesActives = cats.length ? (categoriesActives||cats.slice()) : null;
+  if(cats.length){
+    var valides=[],i;
+    for(i=0;i<categoriesActives.length;i++) if(cats.indexOf(categoriesActives[i])>=0) valides.push(categoriesActives[i]);
+    categoriesActives = valides.length?valides:cats.slice();
+  }
+  construireCategories(cats);
+  lancerDictee(motsDe(liste));
+}
+function lancerDictee(mots){
+  fileMots=new File(mots);
+  ecran("ec-dictee");
+  afficherMot(false);
+  dire(fileMots.courant().m,0.85);
+}
+function construireCategories(cats){
+  var z=$("filtre-categories");
+  if(!cats.length){ z.hidden=true; return; }
+  z.hidden=false;
+  var p=$("puces-categories"); vider(p);
+  var tout=creer("button","puce"+(categoriesActives.length===cats.length?" choisie":""),"Tout");
   tout.type="button";
-  tout.onclick=function(){ categoriesActives=CATEGORIES.slice(); Memoire.ecrire("categories",categoriesActives); construireCategories(); demarrerMots(); };
-  z.appendChild(tout);
-  for(var i=0;i<CATEGORIES.length;i++){
+  tout.onclick=function(){ categoriesActives=cats.slice(); construireCategories(cats); lancerDictee(motsDe(listeCourante)); };
+  p.appendChild(tout);
+  for(var i=0;i<cats.length;i++){
     (function(cat){
-      var nb=0,k;
-      for(k=0;k<MOTS.length;k++) if(MOTS[k].c===cat) nb++;
-      var b=creer("button","puce"+(categoriesActives.indexOf(cat)>=0?" actif":""),cat+" ("+nb+")");
+      var b=creer("button","puce"+(categoriesActives.indexOf(cat)>=0?" choisie":""),cat);
       b.type="button";
       b.onclick=function(){
-        var p=categoriesActives.indexOf(cat);
-        if(p>=0){ if(categoriesActives.length>1) categoriesActives.splice(p,1); }
+        var k=categoriesActives.indexOf(cat);
+        if(k>=0){ if(categoriesActives.length>1) categoriesActives.splice(k,1); }
         else categoriesActives.push(cat);
-        Memoire.ecrire("categories",categoriesActives);
-        construireCategories(); demarrerMots();
+        construireCategories(cats); lancerDictee(motsDe(listeCourante));
       };
-      z.appendChild(b);
-    })(CATEGORIES[i]);
+      p.appendChild(b);
+    })(cats[i]);
   }
-}
-function demarrerMots(){
-  var liste=motsChoisis();
-  fileMots=new File(liste);
-  $("bilan-mots").hidden=true;
-  $("carte-mots").hidden=false;
-  $("puces-categories").parentNode.hidden=false;
-  afficherMot(false);
 }
 function afficherMot(lire){
   motCorrige=false;
-  var m=fileMots.courant();
-  $("carte-mots").className="carte";
-  $("aide-mot").hidden=true; vider($("aide-mot"));
-  $("verdict-mot").hidden=true; vider($("verdict-mot"));
+  var mot=fileMots.courant();
+  $("carte-dictee").className="carte";
+  $("aide-dictee").hidden=true; vider($("aide-dictee"));
+  texte($("retour-dictee"),""); $("retour-dictee").className="retour";
+  vider($("detail-dictee"));
   $("saisie-mot").value=""; $("saisie-mot").disabled=false;
-  var v=$("verifier-mot"); vider(v); v.appendChild(document.createTextNode("Vérifier"));
-  majJaugeMots();
-  if(lire) dire(m.m,0.85);
+  $("voir-syllabes").hidden = !mot.s;
+  texte($("verifier-mot"),"Vérifier");
+  majDictee();
+  cacherMot=false;
+  if(lire) dire(mot.m,0.85);
   try{ $("saisie-mot").focus(); }catch(e){}
 }
-function majJaugeMots(){
-  var t=fileMots.total;
-  $("compte-mots").firstChild.nodeValue=fileMots.reussis+" / "+t+" réussis";
-  $("jauge-mots").style.width=(fileMots.reussis/t*100)+"%";
+function majDictee(){
+  texte($("avancee-dictee"), fileMots.reussis+" sur "+fileMots.total+" mots réussis"
+    + (fileMots.file.length ? " · reste "+fileMots.file.length : ""));
+  $("jauge-dictee").style.width=(fileMots.reussis/fileMots.total*100)+"%";
 }
 function verifierMot(){
-  if(motCorrige){ suivantMot(); return; }
+  if(motCorrige){ afficherMot(true); return; }
   var saisi=$("saisie-mot").value;
-  if(!normaliser(saisi)){ try{ $("saisie-mot").focus(); }catch(e){} return; }
-  motCorrige=true;
-  arreterVoix();
-  var m=fileMots.courant();
-  var ok=(normaliser(saisi)===normaliser(m.m));
-  var z=$("verdict-mot"); vider(z); z.hidden=false;
+  if(!normaliser(saisi)){ pastille("Écris le mot d'abord."); try{ $("saisie-mot").focus(); }catch(e){} return; }
+  motCorrige=true; stopVoix();
+  var mot=fileMots.courant(), ok=(normaliser(saisi)===normaliser(mot.m));
   $("saisie-mot").disabled=true;
-
+  var d=$("detail-dictee"); vider(d);
   var fini=false;
   if(ok){
-    $("carte-mots").className="carte juste";
-    z.appendChild(creer("p","titre ok","Bravo, c'est juste ! 🎉"));
+    $("carte-dictee").className="carte juste";
+    texte($("retour-dictee"),"Juste ! 🎉"); $("retour-dictee").className="retour bien";
     fini=fileMots.juste();
   }else{
-    $("carte-mots").className="carte faux";
-    z.appendChild(creer("p","titre ko","Presque… ce mot reviendra."));
-    var ops=diffLettres(m.m,saisi);
-    z.appendChild(ligneDiff("Tu as écrit :",ops,"saisi"));
-    z.appendChild(ligneDiff("Il fallait écrire :",ops,"attendu"));
-    var syl=creer("p","ligne-diff","En syllabes :");
-    var bs=creer("b",null,m.s); bs.style.color="var(--vert)";
-    syl.appendChild(bs); z.appendChild(syl);
-    fileMots.faux(m.m);
+    $("carte-dictee").className="carte faux";
+    texte($("retour-dictee"),"Pas tout à fait — ce mot reviendra.");
+    $("retour-dictee").className="retour mal";
+    var ops=comparerLettres(mot.m,saisi);
+    d.appendChild(ligne("Tu as écrit :",ops,"saisi"));
+    d.appendChild(ligne("Ça s'écrit :",ops,"attendu"));
+    if(mot.s){
+      var p=creer("p","diff","En syllabes :");
+      p.appendChild(creer("b",null,mot.s));
+      d.appendChild(p);
+    }
+    fileMots.faux(mot.m);
   }
-  majJaugeMots();
-  if(fini){ terminerMots(); return; }
-  var v=$("verifier-mot"); vider(v);
-  v.appendChild(document.createTextNode(ok?"Mot suivant ›":"Je réessaie plus tard ›"));
-  try{ v.focus(); }catch(e){}
+  majDictee();
+  if(fini){ terminerDictee(); return; }
+  texte($("verifier-mot"), ok?"Mot suivant ›":"Je continue ›");
+  try{ $("verifier-mot").focus(); }catch(e){}
 }
-function suivantMot(){ afficherMot(true); }
-function terminerMots(){
-  $("carte-mots").hidden=true;
-  $("puces-categories").parentNode.hidden=true;
-  var b=$("bilan-mots"); vider(b); b.hidden=false;
-  b.appendChild(creer("div","medaille","🏆"));
-  b.appendChild(creer("h2",null,"Tous les mots sont justes !"));
-  b.appendChild(creer("p",null,(prenom?prenom+", tu":"Tu")+" as écrit sans faute les "+fileMots.total+" mots de la fiche."));
-  var ch=creer("div","chiffres");
-  var d1=creer("div"); d1.appendChild(creer("b",null,String(fileMots.total))); d1.appendChild(creer("span",null,"mots")); ch.appendChild(d1);
-  var d2=creer("div"); d2.appendChild(creer("b",null,String(fileMots.nbErreurs))); d2.appendChild(creer("span",null,"erreurs")); ch.appendChild(d2);
-  var d3=creer("div"); d3.appendChild(creer("b",null,duree(fileMots.secondes()))); d3.appendChild(creer("span",null,"durée")); ch.appendChild(d3);
-  b.appendChild(ch);
-  var durs=[],k;
-  for(k in fileMots.rates) if(fileMots.rates.hasOwnProperty(k)) durs.push(k);
-  Memoire.ecrire("motsDifficiles",durs);
-  Memoire.ecrire("dernierMots",{date:(new Date()).toISOString().slice(0,10),erreurs:fileMots.nbErreurs,secondes:fileMots.secondes()});
-  if(durs.length){
-    b.appendChild(creer("p",null,"Les mots qui ont demandé plusieurs essais :"));
-    var lm=creer("div","liste-mots");
-    for(k=0;k<durs.length;k++) lm.appendChild(creer("span",null,durs[k]));
-    b.appendChild(lm);
-  }
-  var r=creer("div","rangee"); r.style.justifyContent="center";
-  var b1=creer("button","btn","Recommencer"); b1.type="button";
-  b1.onclick=function(){ $("carte-mots").hidden=false; demarrerMots(); };
-  var b2=creer("button","btn secondaire","‹ Accueil"); b2.type="button";
-  b2.onclick=function(){ montrer("ecran-accueil"); rafraichirAccueil(); };
-  r.appendChild(b1); r.appendChild(b2); b.appendChild(r);
+function terminerDictee(){
+  resultat("Tous les mots sont justes !",fileMots,"mots",function(rates){
+    var mots=[],i,j;
+    for(i=0;i<rates.length;i++)
+      for(j=0;j<listeCourante.mots.length;j++)
+        if(listeCourante.mots[j].m===rates[i]) mots.push(listeCourante.mots[j]);
+    if(!mots.length) return;
+    lancerDictee(mots);
+  });
 }
-
+var cacherMot=false;
 $("ecouter").onclick=function(){ dire(fileMots.courant().m,0.85); };
 $("ecouter-lent").onclick=function(){ dire(fileMots.courant().m,0.5); };
-$("syllabes").onclick=function(){
-  var a=$("aide-mot"); vider(a); a.hidden=false;
-  a.appendChild(creer("div","syllabes",fileMots.courant().s));
-  a.appendChild(creer("small",null,"Le petit mot devant (un, une, le) n'est pas découpé."));
+$("voir-syllabes").onclick=function(){
+  var a=$("aide-dictee"); vider(a); a.hidden=false;
+  a.appendChild(creer("div","syl",fileMots.courant().s));
+  a.appendChild(creer("small",null,"Le petit mot devant n'est pas découpé."));
+  cacherMot=false;
 };
-(function(){
-  var reveler=function(){
-    var a=$("aide-mot"); vider(a); a.hidden=false;
-    a.appendChild(creer("div","motentier",fileMots.courant().m));
-    a.appendChild(creer("small",null,"Lis-le, puis appuie encore sur 👁 pour le cacher."));
-    $("montrer").onclick=cacher;
-  };
-  var cacher=function(){ $("aide-mot").hidden=true; $("montrer").onclick=reveler; };
-  $("montrer").onclick=reveler;
-})();
-function garderVisible(bouton){
-  window.setTimeout(function(){
-    try{ bouton.scrollIntoView(false); }catch(e){}
-  },350);
-}
-$("saisie-mot").onfocus=function(){ garderVisible($("verifier-mot")); };
-$("saisie-calcul").onfocus=function(){ garderVisible($("verifier-calcul")); };
+$("voir-mot").onclick=function(){
+  var a=$("aide-dictee");
+  if(cacherMot){ a.hidden=true; cacherMot=false; return; }
+  vider(a); a.hidden=false;
+  a.appendChild(creer("div","entier",fileMots.courant().m));
+  a.appendChild(creer("small",null,"Lis-le, puis appuie encore sur 👁 pour le cacher."));
+  cacherMot=true;
+};
 $("verifier-mot").onclick=verifierMot;
 $("saisie-mot").onkeydown=function(e){ if(e.key==="Enter"||e.keyCode===13){ e.preventDefault(); verifierMot(); } };
 
-/* Lettres accentuées : sur iPad elles demandent un appui long, ici un seul appui. */
+/* Lettres accentuées : un seul appui au lieu d'un appui long sur iPad */
 (function(){
-  var lettres=["é","è","ê","à","â","î","ô","û","ç","ï"];
-  var z=$("clavier-accents");
-  for(var i=0;i<lettres.length;i++){
+  var lettres=["é","è","ê","à","â","î","ô","û","ç","ï"], z=$("accents"),i;
+  for(i=0;i<lettres.length;i++){
     (function(c){
       var b=creer("button",null,c); b.type="button";
       b.onclick=function(){
         var z2=$("saisie-mot");
         if(z2.disabled) return;
-        var d=z2.selectionStart, f=z2.selectionEnd;
-        if(typeof d!=="number"){ z2.value+=c; }
+        var d=z2.selectionStart,f=z2.selectionEnd;
+        if(typeof d!=="number") z2.value+=c;
         else{
           z2.value=z2.value.slice(0,d)+c+z2.value.slice(f);
           try{ z2.selectionStart=z2.selectionEnd=d+c.length; }catch(e){}
@@ -812,125 +829,114 @@ $("saisie-mot").onkeydown=function(e){ if(e.key==="Enter"||e.keyCode===13){ e.pr
   }
 })();
 
-/* =========================================================
-   EXERCICE 2 — LES TABLES
-   ========================================================= */
-var tablesActives=Memoire.lire("tables",[2,3,4,5,6,7,8,9]);
-if(!tablesActives || !tablesActives.length) tablesActives=[2,3,4,5,6,7,8,9];
+/* =====================================================================
+   TABLES
+   ===================================================================== */
+var tablesChoisies=Memoire.lire("tables",[2,3,4,5]);
+if(!tablesChoisies||!tablesChoisies.length) tablesChoisies=[2,3,4,5];
 var fileCalculs=null, calculCorrige=false;
 
+$("go-tables").onclick=function(){ construireTables(); ecran("ec-tables-choix"); };
 function construireTables(){
   var z=$("puces-tables"); vider(z);
   for(var t=2;t<=10;t++){
     (function(n){
-      var b=creer("button","puce"+(tablesActives.indexOf(n)>=0?" actif":""),"× "+n);
+      var b=creer("button","puce"+(tablesChoisies.indexOf(n)>=0?" choisie":""),"× "+n);
       b.type="button";
       b.onclick=function(){
-        var p=tablesActives.indexOf(n);
-        if(p>=0){ if(tablesActives.length>1) tablesActives.splice(p,1); }
-        else tablesActives.push(n);
-        Memoire.ecrire("tables",tablesActives);
-        construireTables(); demarrerTables();
+        var k=tablesChoisies.indexOf(n);
+        if(k>=0) tablesChoisies.splice(k,1); else tablesChoisies.push(n);
+        Memoire.ecrire("tables",tablesChoisies);
+        construireTables();
       };
       z.appendChild(b);
     })(t);
   }
 }
-function demarrerTables(){
+$("lancer-tables").onclick=function(){
+  if(!tablesChoisies.length){ pastille("Choisis au moins une table."); return; }
   var liste=[],i,f;
-  for(i=0;i<tablesActives.length;i++)
-    for(f=1;f<=10;f++) liste.push({a:tablesActives[i],b:f});
+  for(i=0;i<tablesChoisies.length;i++) for(f=1;f<=10;f++) liste.push({a:tablesChoisies[i],b:f});
+  lancerTables(liste);
+};
+function lancerTables(liste){
   fileCalculs=new File(liste);
-  $("bilan-tables").hidden=true;
-  $("carte-tables").hidden=false;
-  $("puces-tables").parentNode.hidden=false;
+  ecran("ec-tables");
   afficherCalcul();
 }
 function afficherCalcul(){
   calculCorrige=false;
   var q=fileCalculs.courant();
   $("carte-tables").className="carte";
-  vider($("calcul"));
-  $("calcul").appendChild(document.createTextNode(q.a+" "));
-  $("calcul").appendChild(creer("span","signe","×"));
-  $("calcul").appendChild(document.createTextNode(" "+q.b));
-  $("verdict-calcul").hidden=true; vider($("verdict-calcul"));
+  texte($("calcul"),q.a+" × "+q.b);
+  texte($("retour-tables"),""); $("retour-tables").className="retour";
+  $("retour-tables").style.textAlign="center";
   $("saisie-calcul").value=""; $("saisie-calcul").disabled=false;
-  var v=$("verifier-calcul"); vider(v); v.appendChild(document.createTextNode("Vérifier"));
-  majJaugeTables();
+  texte($("verifier-calcul"),"Vérifier");
+  majTables();
   try{ $("saisie-calcul").focus(); }catch(e){}
 }
-function majJaugeTables(){
-  var t=fileCalculs.total;
-  $("compte-tables").firstChild.nodeValue=fileCalculs.reussis+" / "+t+" réussis";
-  $("jauge-tables").style.width=(fileCalculs.reussis/t*100)+"%";
+function majTables(){
+  texte($("avancee-tables"), fileCalculs.reussis+" sur "+fileCalculs.total+" calculs réussis"
+    + (fileCalculs.file.length ? " · reste "+fileCalculs.file.length : ""));
+  $("jauge-tables").style.width=(fileCalculs.reussis/fileCalculs.total*100)+"%";
 }
 function verifierCalcul(){
   if(calculCorrige){ afficherCalcul(); return; }
-  var saisi=$("saisie-calcul").value.replace(/\s/g,"");
-  if(!/^[0-9]+$/.test(saisi)){ try{ $("saisie-calcul").focus(); }catch(e){} return; }
+  var v=$("saisie-calcul").value.replace(/\s/g,"");
+  if(!/^[0-9]+$/.test(v)){ pastille("Écris un nombre."); try{ $("saisie-calcul").focus(); }catch(e){} return; }
   calculCorrige=true;
-  var q=fileCalculs.courant(), attendu=q.a*q.b;
-  var ok=(Number(saisi)===attendu);
-  var z=$("verdict-calcul"); vider(z); z.hidden=false;
+  var q=fileCalculs.courant(), attendu=q.a*q.b, ok=(Number(v)===attendu);
   $("saisie-calcul").disabled=true;
   var fini=false;
   if(ok){
     $("carte-tables").className="carte juste";
-    z.appendChild(creer("p","titre ok","Juste ! 🎉"));
+    texte($("retour-tables"),"Juste ! 🎉"); $("retour-tables").className="retour bien";
     fini=fileCalculs.juste();
   }else{
     $("carte-tables").className="carte faux";
-    z.appendChild(creer("p","titre ko",q.a+" × "+q.b+" = "+attendu));
-    z.appendChild(creer("p","ligne-diff","Ce calcul reviendra tout à l'heure."));
+    texte($("retour-tables"),q.a+" × "+q.b+" = "+attendu);
+    $("retour-tables").className="retour mal";
     fileCalculs.faux(q.a+" × "+q.b);
   }
-  majJaugeTables();
-  if(fini){ terminerTables(); return; }
-  var v=$("verifier-calcul"); vider(v);
-  v.appendChild(document.createTextNode(ok?"Calcul suivant ›":"Je réessaie plus tard ›"));
-  try{ v.focus(); }catch(e){}
-}
-function terminerTables(){
-  $("carte-tables").hidden=true;
-  $("puces-tables").parentNode.hidden=true;
-  var b=$("bilan-tables"); vider(b); b.hidden=false;
-  b.appendChild(creer("div","medaille","🥇"));
-  b.appendChild(creer("h2",null,"Toutes les tables sont justes !"));
-  b.appendChild(creer("p",null,fileCalculs.total+" calculs réussis sans qu'il n'en reste un seul faux."));
-  var ch=creer("div","chiffres");
-  var d1=creer("div"); d1.appendChild(creer("b",null,String(fileCalculs.total))); d1.appendChild(creer("span",null,"calculs")); ch.appendChild(d1);
-  var d2=creer("div"); d2.appendChild(creer("b",null,String(fileCalculs.nbErreurs))); d2.appendChild(creer("span",null,"erreurs")); ch.appendChild(d2);
-  var d3=creer("div"); d3.appendChild(creer("b",null,duree(fileCalculs.secondes()))); d3.appendChild(creer("span",null,"durée")); ch.appendChild(d3);
-  b.appendChild(ch);
-  var durs=[],k;
-  for(k in fileCalculs.rates) if(fileCalculs.rates.hasOwnProperty(k)) durs.push(k);
-  if(durs.length){
-    b.appendChild(creer("p",null,"Les calculs à revoir demain :"));
-    var lm=creer("div","liste-mots");
-    for(k=0;k<durs.length;k++) lm.appendChild(creer("span",null,durs[k]));
-    b.appendChild(lm);
+  $("retour-tables").style.textAlign="center";
+  majTables();
+  if(fini){
+    resultat("Toutes les tables sont justes !",fileCalculs,"calculs",function(rates){
+      var liste=[],i,p;
+      for(i=0;i<rates.length;i++){
+        p=rates[i].split(" × ");
+        liste.push({a:Number(p[0]),b:Number(p[1])});
+      }
+      lancerTables(liste);
+    });
+    return;
   }
-  var r=creer("div","rangee"); r.style.justifyContent="center";
-  var b1=creer("button","btn","Recommencer"); b1.type="button";
-  b1.onclick=function(){ $("carte-tables").hidden=false; demarrerTables(); };
-  var b2=creer("button","btn secondaire","‹ Accueil"); b2.type="button";
-  b2.onclick=function(){ montrer("ecran-accueil"); rafraichirAccueil(); };
-  r.appendChild(b1); r.appendChild(b2); b.appendChild(r);
+  texte($("verifier-calcul"), ok?"Suivant ›":"Je continue ›");
+  try{ $("verifier-calcul").focus(); }catch(e){}
 }
 $("verifier-calcul").onclick=verifierCalcul;
 $("saisie-calcul").onkeydown=function(e){ if(e.key==="Enter"||e.keyCode===13){ e.preventDefault(); verifierCalcul(); } };
 
-/* =========================================================
-   EXERCICE 3 — et / est
-   ========================================================= */
+/* =====================================================================
+   ET / EST
+   ===================================================================== */
+var ET_EST=[
+ {avant:"Le chimpanzé",apres:"très intelligent.",r:"est"},
+ {avant:"Il prend un bâton",apres:"franchit le ruisseau.",r:"et"},
+ {avant:"La fourmi",apres:"un insecte.",r:"est"},
+ {avant:"Il utilise un outil",apres:"une branche.",r:"et"},
+ {avant:"Ce singe",apres:"omnivore.",r:"est"},
+ {avant:"Il tente de manger",apres:"il tombe.",r:"et"},
+ {avant:"Le colobe",apres:"un primate.",r:"est"},
+ {avant:"Elle invente",apres:"fabrique un outil.",r:"et"}
+];
 var fileEtEst=null, etestCorrige=false;
-function demarrerEtEst(){
+$("go-etest").onclick=function(){
   fileEtEst=new File(ET_EST.slice());
-  $("bilan-etest").hidden=true;
-  $("carte-etest").hidden=false;
+  ecran("ec-etest");
   afficherEtEst();
-}
+};
 function afficherEtEst(){
   etestCorrige=false;
   var q=fileEtEst.courant();
@@ -939,83 +945,66 @@ function afficherEtEst(){
   p.appendChild(document.createTextNode(q.avant+" "));
   p.appendChild(creer("span","trou","?"));
   p.appendChild(document.createTextNode(" "+q.apres));
-  $("verdict-etest").hidden=true; vider($("verdict-etest"));
-  majJaugeEtEst();
+  texte($("retour-etest"),""); $("retour-etest").className="retour";
+  vider($("detail-etest"));
+  majEtEst();
 }
-function majJaugeEtEst(){
-  var t=fileEtEst.total;
-  $("compte-etest").firstChild.nodeValue=fileEtEst.reussis+" / "+t+" réussies";
-  $("jauge-etest").style.width=(fileEtEst.reussis/t*100)+"%";
+function majEtEst(){
+  texte($("avancee-etest"), fileEtEst.reussis+" sur "+fileEtEst.total+" phrases réussies"
+    + (fileEtEst.file.length ? " · reste "+fileEtEst.file.length : ""));
+  $("jauge-etest").style.width=(fileEtEst.reussis/fileEtEst.total*100)+"%";
 }
 function repondreEtEst(choix){
   if(etestCorrige){ afficherEtEst(); return; }
   etestCorrige=true;
   var q=fileEtEst.courant(), ok=(choix===q.r);
-  var z=$("verdict-etest"); vider(z); z.hidden=false;
   var p=$("phrase-etest"); vider(p);
   p.appendChild(document.createTextNode(q.avant+" "));
-  var mot=creer("span","trou",q.r); p.appendChild(mot);
+  var t=creer("span","trou",q.r);
+  t.style.color = ok ? "var(--ok)" : "var(--nope)";
+  p.appendChild(t);
   p.appendChild(document.createTextNode(" "+q.apres));
+  var d=$("detail-etest"); vider(d);
   var fini=false;
   if(ok){
     $("carte-etest").className="carte juste";
-    z.appendChild(creer("p","titre ok","Bravo ! 🎉"));
+    texte($("retour-etest"),"Juste ! 🎉"); $("retour-etest").className="retour bien";
     fini=fileEtEst.juste();
   }else{
     $("carte-etest").className="carte faux";
-    z.appendChild(creer("p","titre ko","C'était « "+q.r+" »."));
-    z.appendChild(creer("p","ligne-diff", q.r==="est"
-      ? "On peut dire « "+q.avant+" était "+q.apres+" » : c'est le verbe être, donc est."
-      : "On peut dire « "+q.avant+" et puis "+q.apres+" » : c'est et."));
-    fileEtEst.faux(q.avant);
+    texte($("retour-etest"),"C'était « "+q.r+" »."); $("retour-etest").className="retour mal";
+    d.appendChild(creer("p","diff", q.r==="est"
+      ? "On peut dire : « "+q.avant+" était "+q.apres+" » — c'est le verbe être."
+      : "On peut dire : « "+q.avant+" et puis "+q.apres+" »."));
+    fileEtEst.faux(q.avant+" …");
   }
-  majJaugeEtEst();
-  if(fini){ terminerEtEst(); return; }
-  var b=creer("button","btn grand",ok?"Phrase suivante ›":"Je continue ›");
+  majEtEst();
+  if(fini){ resultat("et / est : c'est acquis !",fileEtEst,"phrases",null); return; }
+  var b=creer("button","plein",ok?"Phrase suivante ›":"Je continue ›");
   b.type="button"; b.onclick=afficherEtEst;
   var r=creer("div","rangee"); r.style.marginTop="10px"; r.appendChild(b);
-  z.appendChild(r);
+  d.appendChild(r);
   try{ b.focus(); }catch(e){}
 }
-function terminerEtEst(){
-  $("carte-etest").hidden=true;
-  var b=$("bilan-etest"); vider(b); b.hidden=false;
-  b.appendChild(creer("div","medaille","⭐️"));
-  b.appendChild(creer("h2",null,"et / est : c'est acquis !"));
-  b.appendChild(creer("p",null,"Les 8 phrases sont justes, avec "+fileEtEst.nbErreurs+" erreur"+(fileEtEst.nbErreurs>1?"s":"")+" en chemin."));
-  var r=creer("div","rangee"); r.style.justifyContent="center"; r.style.marginTop="16px";
-  var b1=creer("button","btn","Recommencer"); b1.type="button";
-  b1.onclick=function(){ $("carte-etest").hidden=false; demarrerEtEst(); };
-  var b2=creer("button","btn secondaire","‹ Accueil"); b2.type="button";
-  b2.onclick=function(){ montrer("ecran-accueil"); rafraichirAccueil(); };
-  r.appendChild(b1); r.appendChild(b2); b.appendChild(r);
-}
 (function(){
-  var bs=document.querySelectorAll("[data-choix]");
-  for(var i=0;i<bs.length;i++){
-    (function(el){ el.onclick=function(){ repondreEtEst(el.getAttribute("data-choix")); }; })(bs[i]);
-  }
+  var b=document.querySelectorAll("[data-choix]");
+  for(var i=0;i<b.length;i++)
+    (function(el){ el.onclick=function(){ repondreEtEst(el.getAttribute("data-choix")); }; })(b[i]);
 })();
 
-/* =========================================================
-   Accueil : entrées et état
-   ========================================================= */
-function rafraichirAccueil(){
-  var n=motsChoisis().length;
-  $("etat-mots").firstChild.nodeValue = n===MOTS.length ? (MOTS.length+" mots") : (n+" mots sur "+MOTS.length);
-  var dern=Memoire.lire("dernierMots",null);
-  if(dern) $("etat-mots").firstChild.nodeValue += " · dernière fois : "+dern.erreurs+" erreur"+(dern.erreurs>1?"s":"");
-  var lt=tablesActives.slice().sort(function(a,b){return a-b;});
-  $("etat-tables").firstChild.nodeValue = "tables "+lt.join(", ")+" · "+(lt.length*10)+" calculs";
+/* =====================================================================
+   Clavier iOS : garder le bouton Vérifier visible
+   ===================================================================== */
+function garderVisible(el){
+  window.setTimeout(function(){ try{ el.scrollIntoView(false); }catch(e){} },350);
 }
-$("vers-mots").onclick=function(){ montrer("ecran-mots"); demarrerMots(); dire(fileMots.courant().m,0.85); };
-$("vers-tables").onclick=function(){ montrer("ecran-tables"); demarrerTables(); };
-$("vers-etest").onclick=function(){ montrer("ecran-etest"); demarrerEtEst(); };
+$("saisie-mot").onfocus=function(){ garderVisible($("verifier-mot")); };
+$("saisie-calcul").onfocus=function(){ garderVisible($("verifier-calcul")); };
 
-construireCategories();
-construireTables();
-rafraichirAccueil();
-montrer("ecran-accueil");
+/* ===================================================================== */
+chargerListes();
+dessinerListes();
+ecran("ec-accueil");
 
 })();
 </script>

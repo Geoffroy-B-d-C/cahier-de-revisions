@@ -175,6 +175,9 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
 .seance span{color:var(--encre-doux);font-size:15px;display:block}
 .seance.jour{background:var(--ok-fond);border:3px solid var(--ok);border-radius:14px;padding:12px 14px;margin-bottom:8px}
 .seance.jour b{color:var(--ok)}
+.puce.faite{border-color:var(--ok);box-shadow:2px 2px 0 var(--ok)}
+.puce.faite.choisie{background:var(--ok);border-color:var(--ok)}
+.fait-tables{margin:4px 0 0;color:var(--ok);font-weight:700;font-size:16px}
 .heure-fin{margin-top:10px;font-size:15px;color:var(--encre-doux);font-weight:700}
 
 /* ------------- résultat ------------- */
@@ -294,6 +297,7 @@ franchir" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck=
   <button class="fantome" type="button" data-retour>‹ Retour</button>
   <h2>Quelles tables ?</h2>
   <div class="puces" id="puces-tables"></div>
+  <p class="fait-tables" id="recap-tables" hidden></p>
   <p class="indice">Chaque table choisie ajoute ses 10 calculs. La série s'arrête quand tous ont été justes.</p>
   <button class="grand centre plein" type="button" id="lancer-tables" style="margin-top:18px">C'est parti</button>
 </section>
@@ -695,12 +699,22 @@ function quandExact(iso){
   return JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()]+h;
 }
 function etoilesPour(erreurs){ return erreurs===0?"★★★":(erreurs<=2?"★★☆":"★☆☆"); }
-function enregistrerSeance(type,nom,file){
+function enregistrerSeance(type,nom,file,tables){
   var carnet=Memoire.lire("carnet",[]);
   carnet.unshift({type:type,nom:nom,quand:(new Date()).toISOString(),total:file.total,
-    erreurs:file.erreurs,secondes:file.secondes(),unite:file.unite||"items"});
+    erreurs:file.erreurs,secondes:file.secondes(),unite:file.unite||"items",
+    tables:tables||null});
   if(carnet.length>40) carnet=carnet.slice(0,40);
   Memoire.ecrire("carnet",carnet);
+}
+function tablesFaitesAujourdhui(){
+  var carnet=Memoire.lire("carnet",[]), jour=cleJour(new Date()), faites=[], i, k;
+  for(i=0;i<carnet.length;i++){
+    if(carnet[i].type!=="tables" || !carnet[i].tables) continue;
+    if(cleJour(new Date(carnet[i].quand))!==jour) continue;
+    for(k=0;k<carnet[i].tables.length;k++) if(faites.indexOf(carnet[i].tables[k])<0) faites.push(carnet[i].tables[k]);
+  }
+  return faites.sort(function(a,b){return a-b;});
 }
 function dessinerCarnet(){
   var carnet=Memoire.lire("carnet",[]), i, e, aujourdhui=cleJour(new Date());
@@ -712,8 +726,15 @@ function dessinerCarnet(){
   var cles=["dictee","tables","etest"],k;
   for(k=0;k<cles.length;k++){
     var badge=$("fait-"+cles[k]), d=derniers[cles[k]];
-    if(d){ texte(badge,"✓ Faite aujourd'hui à "+heureDe(new Date(d.quand))+" · "+d.erreurs+" erreur"+(d.erreurs>1?"s":"")); badge.hidden=false; }
-    else badge.hidden=true;
+    if(!d){ badge.hidden=true; continue; }
+    if(cles[k]==="tables"){
+      var tf=tablesFaitesAujourdhui(), noms=[],t;
+      for(t=0;t<tf.length;t++) noms.push("× "+tf[t]);
+      texte(badge,"✓ Aujourd'hui : table"+(tf.length>1?"s":"")+" "+noms.join(", ")+" · dernière à "+heureDe(new Date(d.quand)));
+    }else{
+      texte(badge,"✓ Faite aujourd'hui à "+heureDe(new Date(d.quand))+" · "+d.erreurs+" erreur"+(d.erreurs>1?"s":""));
+    }
+    badge.hidden=false;
   }
   var z=$("carnet"), l=$("carnet-lignes"); vider(l);
   if(!carnet.length){ z.hidden=true; return; }
@@ -741,7 +762,7 @@ $("effacer-carnet").onclick=function(){
    ===================================================================== */
 var refaire=null;
 function resultat(titre,file,libelleUnite,actionRefaire,seance){
-  if(seance){ file.unite=libelleUnite; enregistrerSeance(seance.type,seance.nom,file); }
+  if(seance){ file.unite=libelleUnite; enregistrerSeance(seance.type,seance.nom,file,seance.tables); }
   var b=$("bilan"); vider(b);
   var e=file.erreurs;
   b.appendChild(creer("div","etoiles",etoilesPour(e)));
@@ -936,9 +957,16 @@ var fileCalculs=null, calculCorrige=false;
 $("go-tables").onclick=function(){ construireTables(); ecran("ec-tables-choix"); };
 function construireTables(){
   var z=$("puces-tables"); vider(z);
+  var faites=tablesFaitesAujourdhui();
+  var recap=$("recap-tables");
+  if(faites.length){
+    var noms=[],i; for(i=0;i<faites.length;i++) noms.push("× "+faites[i]);
+    texte(recap,"✓ Déjà réussie"+(faites.length>1?"s":"")+" aujourd'hui : "+noms.join(", ")); recap.hidden=false;
+  }else recap.hidden=true;
   for(var t=2;t<=10;t++){
     (function(n){
-      var b=creer("button","puce"+(tablesChoisies.indexOf(n)>=0?" choisie":""),"× "+n);
+      var faite=(faites.indexOf(n)>=0);
+      var b=creer("button","puce"+(tablesChoisies.indexOf(n)>=0?" choisie":"")+(faite?" faite":""),"× "+n+(faite?" ✓":""));
       b.type="button";
       b.onclick=function(){
         var k=tablesChoisies.indexOf(n);
@@ -999,7 +1027,8 @@ function verifierCalcul(){
   $("retour-tables").style.textAlign="center";
   majTables();
   if(fini){
-    var seance = fileCalculs.rejeu ? null : {type:"tables",nom:"× "+tablesChoisies.slice().sort(function(a,b){return a-b;}).join(", ")};
+    var triees=tablesChoisies.slice().sort(function(a,b){return a-b;});
+    var seance = fileCalculs.rejeu ? null : {type:"tables",nom:"× "+triees.join(", "),tables:triees};
     resultat("Toutes les tables sont justes !",fileCalculs,"calculs",function(rates){
       var liste=[],i,p;
       for(i=0;i<rates.length;i++){

@@ -115,13 +115,6 @@ label.champ{display:block;font-size:14px;font-weight:700;letter-spacing:.03em;te
   box-shadow:2px 2px 0 var(--encre);
 }
 
-.aide{
-  margin:14px 0 0;padding:12px 14px;background:var(--bureau);border-radius:14px;text-align:center;
-  font-family:"Baloo 2",sans-serif;font-weight:700;
-}
-.aide .syl{font-size:28px;color:var(--encre)}
-.aide .entier{font-size:30px}
-.aide small{display:block;font-family:"Nunito",sans-serif;font-weight:600;font-size:14px;color:var(--encre-doux);margin-top:4px}
 
 .retour{font-size:22px;font-weight:800;font-family:"Baloo 2",sans-serif;margin:14px 0 2px;min-height:30px}
 .retour.bien{color:var(--ok)}
@@ -239,10 +232,7 @@ franchir" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck=
     <button class="grand centre plein" type="button" id="ecouter">🔊 Écouter le mot</button>
     <div class="rangee">
       <button type="button" id="ecouter-lent">🐢 Moins vite</button>
-      <button type="button" id="voir-syllabes">✂️ Syllabes</button>
-      <button type="button" id="voir-mot">👁 Montrer</button>
     </div>
-    <div class="aide" id="aide-dictee" hidden></div>
 
     <label class="champ" for="saisie-mot">J'écris le mot</label>
     <input type="text" id="saisie-mot" placeholder="écris le mot ici"
@@ -366,9 +356,8 @@ function ecran(id){
 
 /* =====================================================================
    Les listes de mots
-   La liste de la fiche porte le découpage en syllabes et les catégories,
-   saisis à la main. Une liste ajoutée ici n'a ni l'un ni l'autre : le
-   bouton Syllabes disparaît alors, plutôt que d'inventer un découpage.
+   La liste de la fiche porte les catégories (puces de filtrage) et un
+   découpage en syllabes conservé dans les données mais plus affiché.
    ===================================================================== */
 var LISTE_FICHE={
   id:"fiche-2026-09-10",
@@ -532,7 +521,7 @@ function choisirVoix(){
     if(!large && /^fr/i.test(v[i].lang)) large=v[i];
   }
   voixFr=exacte||large||null;
-  if(v.length && !voixFr) alerteVoix("Aucune voix française sur cet appareil. Le bouton « 👁 Montrer » affiche le mot : on le lit, on le cache, puis on l'écrit.");
+  if(v.length && !voixFr) alerteVoix("Aucune voix française sur cet appareil : la dictée ne peut pas être lue. Sur iPad, vérifie Réglages → Général → Accessibilité → Parole → Voix.");
   else alerteVoix(null);
 }
 function alerteVoix(msg){
@@ -544,7 +533,7 @@ if(tts){
   choisirVoix();
   if(typeof window.speechSynthesis.addEventListener==="function") window.speechSynthesis.addEventListener("voiceschanged",choisirVoix);
   else window.speechSynthesis.onvoiceschanged=choisirVoix;
-}else alerteVoix("Ce navigateur ne lit pas à voix haute. Utilise « 👁 Montrer » : on lit le mot, on le cache, puis on l'écrit.");
+}else alerteVoix("Ce navigateur ne sait pas lire à voix haute : la dictée ne fonctionnera pas ici.");
 function stopVoix(){ if(tts){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
 function dire(t,vitesse){
   if(!tts){ pastille("Pas de voix sur cet appareil."); return; }
@@ -731,14 +720,11 @@ function afficherMot(lire){
   motCorrige=false;
   var mot=fileMots.courant();
   $("carte-dictee").className="carte";
-  $("aide-dictee").hidden=true; vider($("aide-dictee"));
   texte($("retour-dictee"),""); $("retour-dictee").className="retour";
   vider($("detail-dictee"));
   $("saisie-mot").value=""; $("saisie-mot").disabled=false;
-  $("voir-syllabes").hidden = !mot.s;
   texte($("verifier-mot"),"Vérifier");
   majDictee();
-  cacherMot=false;
   if(lire) dire(mot.m,0.85);
   try{ $("saisie-mot").focus(); }catch(e){}
 }
@@ -767,11 +753,6 @@ function verifierMot(){
     var ops=comparerLettres(mot.m,saisi);
     d.appendChild(ligne("Tu as écrit :",ops,"saisi"));
     d.appendChild(ligne("Ça s'écrit :",ops,"attendu"));
-    if(mot.s){
-      var p=creer("p","diff","En syllabes :");
-      p.appendChild(creer("b",null,mot.s));
-      d.appendChild(p);
-    }
     fileMots.faux(mot.m);
   }
   majDictee();
@@ -789,23 +770,8 @@ function terminerDictee(){
     lancerDictee(mots);
   });
 }
-var cacherMot=false;
 $("ecouter").onclick=function(){ dire(fileMots.courant().m,0.85); };
 $("ecouter-lent").onclick=function(){ dire(fileMots.courant().m,0.5); };
-$("voir-syllabes").onclick=function(){
-  var a=$("aide-dictee"); vider(a); a.hidden=false;
-  a.appendChild(creer("div","syl",fileMots.courant().s));
-  a.appendChild(creer("small",null,"Le petit mot devant n'est pas découpé."));
-  cacherMot=false;
-};
-$("voir-mot").onclick=function(){
-  var a=$("aide-dictee");
-  if(cacherMot){ a.hidden=true; cacherMot=false; return; }
-  vider(a); a.hidden=false;
-  a.appendChild(creer("div","entier",fileMots.courant().m));
-  a.appendChild(creer("small",null,"Lis-le, puis appuie encore sur 👁 pour le cacher."));
-  cacherMot=true;
-};
 $("verifier-mot").onclick=verifierMot;
 $("saisie-mot").onkeydown=function(e){ if(e.key==="Enter"||e.keyCode===13){ e.preventDefault(); verifierMot(); } };
 

@@ -10,8 +10,8 @@ questions plus loin ; la série ne se termine que lorsque tout a été réussi.*
 
 1. **Dictée de mots** — l'app dit le mot, l'élève l'écrit en entier avec son article.
    La correction compare **lettre par lettre** (plus longue sous-suite commune) et
-   montre les lettres en trop barrées et les lettres oubliées soulignées. Aides :
-   réécouter moins vite, voir le mot **découpé en syllabes**, ou l'afficher un moment.
+   montre les lettres en trop barrées et les lettres oubliées soulignées. Une seule
+   aide : réécouter le mot moins vite. Le mot n'est jamais affiché avant la correction.
 2. **Tables de multiplication** — tables de 2 à 10, dix multiplicateurs chacune.
 3. **et / est** — le « Revoir » de la fiche : 8 phrases à trou, avec le test de
    substitution (*était* → est, *et puis* → et) donné à chaque erreur.
@@ -19,18 +19,17 @@ questions plus loin ; la série ne se termine que lorsque tout a été réussi.*
 ## Les listes de mots
 
 La liste livrée est celle de la fiche du jeudi 10 septembre 2026 (41 mots), avec
-pour chaque mot son **découpage en syllabes** et sa **catégorie** (noms, adjectifs,
-verbes, mots invariables), saisis à la main.
+pour chaque mot sa **catégorie** (noms, adjectifs, verbes, mots invariables), qui
+sert aux puces de filtrage. Un découpage en syllabes est conservé dans les données
+mais n'est plus affiché.
 
 En bas de l'accueil, la zone « Listes de mots » permet d'en ajouter, d'en modifier
 et d'en supprimer sans toucher au code : un mot par ligne, écrit exactement comme
 sur la fiche. Ces listes sont enregistrées dans le `localStorage` et survivent à la
 fermeture de la page.
 
-Une liste ajoutée par ce formulaire n'a ni syllabes ni catégories : le bouton
-« Syllabes » et les puces de catégorie disparaissent alors, plutôt que d'inventer
-un découpage qui pourrait être faux. Pour une liste avec syllabes, il faut
-l'ajouter dans `LISTE_FICHE` (ou une liste sœur) dans `index.html`.
+Une liste ajoutée par ce formulaire n'a pas de catégories : les puces de filtrage
+disparaissent alors.
 
 **« Envoyer sur l'iPad »** fabrique un lien `…/#l=<listes en base64>` : ouvert sur
 un autre appareil, il y ajoute les listes qui n'y sont pas déjà (il n'écrase rien).

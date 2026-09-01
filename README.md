@@ -23,6 +23,17 @@ pour chaque mot sa **catégorie** (noms, adjectifs, verbes, mots invariables), q
 sert aux puces de filtrage. Un découpage en syllabes est conservé dans les données
 mais n'est plus affiché.
 
+## Ajouter la fiche de la semaine
+
+Le circuit choisi : une photo de la fiche envoyée à Claude, qui ajoute la liste
+dans `LISTES_INTEGREES` (`index.html`), la plus récente en premier, avec les
+catégories. Une fois `main` poussé, GitHub Pages la sert en une minute ; rien à
+faire sur l'iPad, la page se recharge à l'ouverture.
+
+Les fiches du code apparaissent toujours, même si des listes ont été ajoutées sur
+l'iPad. Une fiche modifiée sur l'iPad garde sa version modifiée (drapeau
+`modifiee`), une fiche supprimée sur l'iPad reste supprimée (clé `supprimees`).
+
 En bas de l'accueil, la zone « Listes de mots » permet d'en ajouter, d'en modifier
 et d'en supprimer sans toucher au code : un mot par ligne, écrit exactement comme
 sur la fiche. Ces listes sont enregistrées dans le `localStorage` et survivent à la

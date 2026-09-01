@@ -396,8 +396,12 @@ function ecran(id){
 
 /* =====================================================================
    Les listes de mots
-   La liste de la fiche porte les catégories (puces de filtrage) et un
-   découpage en syllabes conservé dans les données mais plus affiché.
+   LISTES_INTEGREES : les fiches ajoutées dans le code (la plus récente en
+   premier). Elles apparaissent toujours, même si des listes ont été
+   ajoutées sur l'iPad ; une fiche modifiée sur l'iPad garde sa version
+   modifiée, une fiche supprimée sur l'iPad reste supprimée.
+   Les catégories servent aux puces de filtrage ; le découpage en syllabes
+   est conservé dans les données mais plus affiché.
    ===================================================================== */
 var LISTE_FICHE={
   id:"fiche-2026-09-10",
@@ -446,17 +450,34 @@ var LISTE_FICHE={
    {m:"très",s:"très",c:"Mots invariables"}
   ]
 };
+var LISTES_INTEGREES=[LISTE_FICHE];
 var listes=[];
 
-function copieFiche(){
-  return JSON.parse(JSON.stringify(LISTE_FICHE));
+function copie(o){ return JSON.parse(JSON.stringify(o)); }
+function estIntegree(id){
+  for(var i=0;i<LISTES_INTEGREES.length;i++) if(LISTES_INTEGREES[i].id===id) return true;
+  return false;
 }
 function chargerListes(){
-  var enregistrees=Memoire.lire("listes",null);
-  listes = (enregistrees && enregistrees.length) ? enregistrees : [copieFiche()];
+  var stockees=Memoire.lire("listes",[])||[], supprimees=Memoire.lire("supprimees",[])||[], i, k;
+  listes=[];
+  /* 1. les fiches du code, sauf celles supprimées sur l'appareil ;
+        une fiche modifiée sur l'appareil garde sa version modifiée */
+  for(i=0;i<LISTES_INTEGREES.length;i++){
+    var integree=LISTES_INTEGREES[i], retenue=null;
+    if(supprimees.indexOf(integree.id)>=0) continue;
+    for(k=0;k<stockees.length;k++) if(stockees[k].id===integree.id && stockees[k].modifiee) retenue=stockees[k];
+    listes.push(retenue||copie(integree));
+  }
+  /* 2. les listes ajoutées sur l'appareil */
+  for(k=0;k<stockees.length;k++) if(!estIntegree(stockees[k].id)) listes.push(stockees[k]);
   importerDepuisLien();
 }
-function sauverListes(){ Memoire.ecrire("listes",listes); }
+function sauverListes(){
+  var aStocker=[],i;
+  for(i=0;i<listes.length;i++) if(!estIntegree(listes[i].id) || listes[i].modifiee) aStocker.push(listes[i]);
+  Memoire.ecrire("listes",aStocker);
+}
 
 /* Import de listes par un lien #l=<base64> (conservé pour compatibilité) */
 function importerDepuisLien(){
@@ -520,15 +541,21 @@ $("enregistrer-liste").onclick=function(){
   }
   if(!mots.length){ pastille("Écris au moins un mot."); return; }
   if(indiceEdition<0) listes.push({id:"l"+(new Date()).getTime(),nom:nom,mots:mots});
-  else { listes[indiceEdition].nom=nom; listes[indiceEdition].mots=mots; }
+  else { listes[indiceEdition].nom=nom; listes[indiceEdition].mots=mots; listes[indiceEdition].modifiee=true; }
   sauverListes(); dessinerListes(); ecran("ec-accueil");
   pastille("Liste enregistrée.");
 };
 $("supprimer-liste").onclick=function(){
   if(indiceEdition<0) return;
   if(!window.confirm("Supprimer « "+listes[indiceEdition].nom+" » ?")) return;
+  var id=listes[indiceEdition].id;
+  if(estIntegree(id)){
+    var supprimees=Memoire.lire("supprimees",[])||[];
+    if(supprimees.indexOf(id)<0) supprimees.push(id);
+    Memoire.ecrire("supprimees",supprimees);
+  }
   listes.splice(indiceEdition,1);
-  if(!listes.length) listes.push(copieFiche());
+  if(!listes.length){ Memoire.ecrire("supprimees",[]); listes.push(copie(LISTES_INTEGREES[0])); }
   sauverListes(); dessinerListes(); ecran("ec-accueil");
 };
 

@@ -232,7 +232,7 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
     <div class="rangee" style="margin-top:10px">
       <button type="button" id="essai-voix">🔊 Écouter un essai</button>
     </div>
-    <p class="indice" id="conseil-voix" style="margin-top:12px">Pour une voix plus naturelle sur l'iPad : Réglages → Général → Accessibilité → Parole → Voix → Français, puis télécharger la version « Améliorée » d'Audrey, Aurélie ou Thomas. Elle apparaît ensuite dans cette liste.</p>
+    <p class="indice" id="conseil-voix" style="margin-top:12px">Seules Audrey et Amélie sont proposées. Pour les avoir en version « Améliorée » sur l'iPad : Réglages → Général → Accessibilité → Parole → Voix → Français.</p>
   </div>
 </section>
 
@@ -577,8 +577,12 @@ function choisirVoix(){
   if(!tts) return;
   var v=[],i;
   try{ v=window.speechSynthesis.getVoices()||[]; }catch(e){}
-  voixDispo=[];
-  for(i=0;i<v.length;i++) if(/^fr/i.test(v[i].lang)) voixDispo.push(v[i]);
+  var francaises=[], retenues=[];
+  for(i=0;i<v.length;i++) if(/^fr/i.test(v[i].lang)) francaises.push(v[i]);
+  /* Seules Audrey et Amélie sont proposées ; si l'appareil n'a ni l'une ni
+     l'autre, on retombe sur toutes les voix françaises pour que la dictée marche. */
+  for(i=0;i<francaises.length;i++) if(/audrey|am[ée]lie/i.test(francaises[i].name||"")) retenues.push(francaises[i]);
+  voixDispo = retenues.length ? retenues : francaises;
   voixDispo.sort(function(a,b){ return scoreVoix(b)-scoreVoix(a); });
   var voulue=Memoire.lire("voix",null), trouvee=null;
   if(voulue) for(i=0;i<voixDispo.length;i++) if(voixDispo[i].name===voulue) trouvee=voixDispo[i];

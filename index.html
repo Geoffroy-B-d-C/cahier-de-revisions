@@ -220,9 +220,8 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
     <div id="listes"></div>
     <div class="rangee" style="margin-top:14px">
       <button type="button" id="ajouter-liste">Ajouter une liste</button>
-      <button type="button" id="partager-listes">Envoyer sur l'iPad</button>
     </div>
-    <p class="indice" style="margin-top:12px">Les listes restent enregistrées sur cet appareil. « Envoyer sur l'iPad » fabrique un lien qui contient les listes : ouvre-le sur l'iPad et elles s'y ajoutent.</p>
+    <p class="indice" style="margin-top:12px">Les listes restent enregistrées sur cet appareil.</p>
 
     <div class="rangee" style="margin-top:16px">
       <button class="fantome" type="button" id="effacer-carnet" style="color:var(--nope)">Effacer le carnet</button>
@@ -459,7 +458,7 @@ function chargerListes(){
 }
 function sauverListes(){ Memoire.ecrire("listes",listes); }
 
-/* Lien de partage : #l=<base64 des listes>, ajouté sans écraser l'existant */
+/* Import de listes par un lien #l=<base64> (conservé pour compatibilité) */
 function importerDepuisLien(){
   var m=(window.location.hash||"").match(/#l=(.+)$/);
   if(!m) return;
@@ -479,21 +478,6 @@ function importerDepuisLien(){
   catch(e){ window.location.hash=""; }
   pastille(ajoutees ? (ajoutees+" liste"+(ajoutees>1?"s ajoutées":" ajoutée")) : "Ces listes sont déjà là.");
 }
-function lienDePartage(){
-  var data=window.btoa(unescape(encodeURIComponent(JSON.stringify(listes))));
-  return window.location.href.split("#")[0]+"#l="+data;
-}
-$("partager-listes").onclick=function(){
-  var url=lienDePartage();
-  if(url.length>12000){ pastille("Trop de mots pour un lien. Supprime une liste."); return; }
-  if(navigator.share){ navigator.share({title:"Cahier de révisions",url:url})["catch"](function(){}); return; }
-  if(navigator.clipboard && navigator.clipboard.writeText){
-    navigator.clipboard.writeText(url).then(function(){ pastille("Lien copié."); },function(){ window.prompt("Copie ce lien :",url); });
-    return;
-  }
-  window.prompt("Copie ce lien :",url);
-};
-
 function dessinerListes(){
   var box=$("listes"); vider(box);
   if(!listes.length){

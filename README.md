@@ -31,8 +31,8 @@ fermeture de la page.
 Une liste ajoutée par ce formulaire n'a pas de catégories : les puces de filtrage
 disparaissent alors.
 
-**« Envoyer sur l'iPad »** fabrique un lien `…/#l=<listes en base64>` : ouvert sur
-un autre appareil, il y ajoute les listes qui n'y sont pas déjà (il n'écrase rien).
+La page sait encore importer des listes depuis un lien `…/#l=<listes en base64>`
+(ajout sans écrasement), mais le bouton qui fabriquait ce lien a été retiré.
 
 ## Contrainte : iPad Air 1 sous iOS 12.5.8 (Safari 12)
 

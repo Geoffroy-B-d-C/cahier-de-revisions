@@ -161,6 +161,22 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
 .ligne-liste b{font-family:"Baloo 2",sans-serif;font-size:19px;font-weight:700;display:block}
 .ligne-liste span{color:var(--encre-doux);font-size:15px}
 
+/* ------------- carnet ------------- */
+.fait{
+  display:inline-block;margin-top:9px;background:var(--ok);color:#fff;font-family:"Nunito",sans-serif;
+  font-weight:700;font-size:14px;padding:5px 11px;border-radius:999px;
+}
+.seance{
+  display:flex;align-items:center;padding:12px 0;border-bottom:2px solid var(--seyes);
+}
+.seance .etoile{font-size:22px;color:var(--crayon);width:78px;letter-spacing:2px;flex:none}
+.seance .quoi{flex:1 1 auto;min-width:0}
+.seance b{font-family:"Baloo 2",sans-serif;font-size:19px;font-weight:700;display:block}
+.seance span{color:var(--encre-doux);font-size:15px;display:block}
+.seance.jour{background:var(--ok-fond);border:3px solid var(--ok);border-radius:14px;padding:12px 14px;margin-bottom:8px}
+.seance.jour b{color:var(--ok)}
+.heure-fin{margin-top:10px;font-size:15px;color:var(--encre-doux);font-weight:700}
+
 /* ------------- résultat ------------- */
 .bilan{text-align:center;padding:26px 18px}
 .etoiles{font-size:40px;letter-spacing:8px;color:var(--crayon);margin-bottom:4px}
@@ -187,9 +203,14 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
   <h1 id="titre-accueil">Cahier de révisions</h1>
   <p class="sous">Choisis ce que tu veux réviser.</p>
 
-  <button class="grand plein" type="button" id="go-dictee">Dictée de mots<small>J'écoute le mot, je l'écris. Un mot raté revient jusqu'à ce qu'il soit juste.</small></button>
-  <button class="grand" type="button" id="go-tables">Tables de multiplication<small>Je choisis mes tables. Un calcul raté revient aussi.</small></button>
-  <button class="grand" type="button" id="go-etest">et / est<small>Le « Revoir » de la fiche : 8 phrases à trou.</small></button>
+  <button class="grand plein" type="button" id="go-dictee">Dictée de mots<small>J'écoute le mot, je l'écris. Un mot raté revient jusqu'à ce qu'il soit juste.</small><span class="fait" id="fait-dictee" hidden></span></button>
+  <button class="grand" type="button" id="go-tables">Tables de multiplication<small>Je choisis mes tables. Un calcul raté revient aussi.</small><span class="fait" id="fait-tables" hidden></span></button>
+  <button class="grand" type="button" id="go-etest">et / est<small>Le « Revoir » de la fiche : 8 phrases à trou.</small><span class="fait" id="fait-etest" hidden></span></button>
+
+  <div id="carnet" hidden>
+    <h2>Mon carnet</h2>
+    <div id="carnet-lignes"></div>
+  </div>
 
   <div class="parents">
     <h2>Listes de mots</h2>
@@ -199,6 +220,10 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
       <button type="button" id="partager-listes">Envoyer sur l'iPad</button>
     </div>
     <p class="indice" style="margin-top:12px">Les listes restent enregistrées sur cet appareil. « Envoyer sur l'iPad » fabrique un lien qui contient les listes : ouvre-le sur l'iPad et elles s'y ajoutent.</p>
+
+    <div class="rangee" style="margin-top:16px">
+      <button class="fantome" type="button" id="effacer-carnet" style="color:var(--nope)">Effacer le carnet</button>
+    </div>
 
     <h2>Voix de la dictée</h2>
     <select id="choix-voix" class="voix"><option>Recherche des voix…</option></select>
@@ -363,7 +388,7 @@ function ecran(id){
 }
 (function(){
   var b=document.querySelectorAll("[data-retour]");
-  for(var i=0;i<b.length;i++) b[i].onclick=function(){ stopVoix(); ecran("ec-accueil"); dessinerListes(); };
+  for(var i=0;i<b.length;i++) b[i].onclick=function(){ stopVoix(); ecran("ec-accueil"); dessinerListes(); dessinerCarnet(); };
 })();
 
 /* =====================================================================
@@ -654,17 +679,78 @@ File.prototype.listeRates=function(){
 File.prototype.secondes=function(){ return Math.round(((new Date()).getTime()-this.debut)/1000); };
 
 /* =====================================================================
+   Carnet des séances terminées (pour montrer aux parents)
+   ===================================================================== */
+var JOURS=["dimanche","lundi","mardi","mercredi","jeudi","vendredi","samedi"];
+var MOIS=["janvier","février","mars","avril","mai","juin","juillet","août","septembre","octobre","novembre","décembre"];
+function deuxChiffres(n){ return (n<10?"0":"")+n; }
+function cleJour(d){ return d.getFullYear()+"-"+deuxChiffres(d.getMonth()+1)+"-"+deuxChiffres(d.getDate()); }
+function heureDe(d){ return d.getHours()+" h "+deuxChiffres(d.getMinutes()); }
+function quandExact(iso){
+  var d=new Date(iso), now=new Date();
+  var hier=new Date(now.getTime()-86400000);
+  var h=" à "+heureDe(d);
+  if(cleJour(d)===cleJour(now)) return "aujourd'hui"+h;
+  if(cleJour(d)===cleJour(hier)) return "hier"+h;
+  return JOURS[d.getDay()]+" "+d.getDate()+" "+MOIS[d.getMonth()]+h;
+}
+function etoilesPour(erreurs){ return erreurs===0?"★★★":(erreurs<=2?"★★☆":"★☆☆"); }
+function enregistrerSeance(type,nom,file){
+  var carnet=Memoire.lire("carnet",[]);
+  carnet.unshift({type:type,nom:nom,quand:(new Date()).toISOString(),total:file.total,
+    erreurs:file.erreurs,secondes:file.secondes(),unite:file.unite||"items"});
+  if(carnet.length>40) carnet=carnet.slice(0,40);
+  Memoire.ecrire("carnet",carnet);
+}
+function dessinerCarnet(){
+  var carnet=Memoire.lire("carnet",[]), i, e, aujourdhui=cleJour(new Date());
+  var derniers={dictee:null,tables:null,etest:null};
+  for(i=0;i<carnet.length;i++){
+    e=carnet[i];
+    if(!derniers[e.type] && cleJour(new Date(e.quand))===aujourdhui) derniers[e.type]=e;
+  }
+  var cles=["dictee","tables","etest"],k;
+  for(k=0;k<cles.length;k++){
+    var badge=$("fait-"+cles[k]), d=derniers[cles[k]];
+    if(d){ texte(badge,"✓ Faite aujourd'hui à "+heureDe(new Date(d.quand))+" · "+d.erreurs+" erreur"+(d.erreurs>1?"s":"")); badge.hidden=false; }
+    else badge.hidden=true;
+  }
+  var z=$("carnet"), l=$("carnet-lignes"); vider(l);
+  if(!carnet.length){ z.hidden=true; return; }
+  z.hidden=false;
+  var NOMS={dictee:"Dictée",tables:"Tables",etest:"et / est"};
+  for(i=0;i<Math.min(carnet.length,12);i++){
+    e=carnet[i];
+    var jour=(cleJour(new Date(e.quand))===aujourdhui);
+    var ligne=creer("div","seance"+(jour?" jour":""));
+    ligne.appendChild(creer("div","etoile",etoilesPour(e.erreurs)));
+    var q=creer("div","quoi");
+    q.appendChild(creer("b",null,NOMS[e.type]+(e.nom?" — "+e.nom:"")+(jour?"  ✓":"")));
+    q.appendChild(creer("span",null,e.total+" "+e.unite+" · "+e.erreurs+" erreur"+(e.erreurs>1?"s":"")+" · "+duree(e.secondes)));
+    q.appendChild(creer("span",null,"Terminée "+quandExact(e.quand)));
+    ligne.appendChild(q); l.appendChild(ligne);
+  }
+}
+$("effacer-carnet").onclick=function(){
+  if(!window.confirm("Effacer tout le carnet des séances ?")) return;
+  Memoire.ecrire("carnet",[]); dessinerCarnet(); pastille("Carnet effacé.");
+};
+
+/* =====================================================================
    Résultat
    ===================================================================== */
 var refaire=null;
-function resultat(titre,file,libelleUnite,actionRefaire){
+function resultat(titre,file,libelleUnite,actionRefaire,seance){
+  if(seance){ file.unite=libelleUnite; enregistrerSeance(seance.type,seance.nom,file); }
   var b=$("bilan"); vider(b);
   var e=file.erreurs;
-  b.appendChild(creer("div","etoiles", e===0?"★★★":(e<=2?"★★☆":"★☆☆")));
+  b.appendChild(creer("div","etoiles",etoilesPour(e)));
   b.appendChild(creer("h2",null,titre));
   b.appendChild(creer("div","note",file.total+" / "+file.total));
   b.appendChild(creer("p","indice",
     "Tout est juste, avec "+e+" erreur"+(e>1?"s":"")+" en chemin, en "+duree(file.secondes())+"."));
+  if(seance) b.appendChild(creer("p","heure-fin","✓ "+(seance.type==="dictee"?"Dictée":(seance.type==="tables"?"Tables":"et / est"))
+    +(seance.nom?" — "+seance.nom:"")+" · terminée "+quandExact((new Date()).toISOString())+". C'est noté dans le carnet de l'accueil."));
   var rates=file.listeRates();
   if(rates.length){
     b.appendChild(creer("p","indice","À revoir demain :"));
@@ -679,7 +765,7 @@ function resultat(titre,file,libelleUnite,actionRefaire){
     r.appendChild(b1);
   }
   var b2=creer("button",null,"Accueil"); b2.type="button";
-  b2.onclick=function(){ ecran("ec-accueil"); dessinerListes(); };
+  b2.onclick=function(){ ecran("ec-accueil"); dessinerListes(); dessinerCarnet(); };
   r.appendChild(b2); b.appendChild(r);
   ecran("ec-resultat");
 }
@@ -803,14 +889,15 @@ function verifierMot(){
   try{ $("verifier-mot").focus(); }catch(e){}
 }
 function terminerDictee(){
+  var seance = fileMots.rejeu ? null : {type:"dictee",nom:listeCourante.nom};
   resultat("Tous les mots sont justes !",fileMots,"mots",function(rates){
     var mots=[],i,j;
     for(i=0;i<rates.length;i++)
       for(j=0;j<listeCourante.mots.length;j++)
         if(listeCourante.mots[j].m===rates[i]) mots.push(listeCourante.mots[j]);
     if(!mots.length) return;
-    lancerDictee(mots);
-  });
+    lancerDictee(mots); fileMots.rejeu=true;
+  },seance);
 }
 $("ecouter").onclick=function(){ dire(fileMots.courant().m,0.85); };
 $("ecouter-lent").onclick=function(){ dire(fileMots.courant().m,0.6); };
@@ -912,14 +999,15 @@ function verifierCalcul(){
   $("retour-tables").style.textAlign="center";
   majTables();
   if(fini){
+    var seance = fileCalculs.rejeu ? null : {type:"tables",nom:"× "+tablesChoisies.slice().sort(function(a,b){return a-b;}).join(", ")};
     resultat("Toutes les tables sont justes !",fileCalculs,"calculs",function(rates){
       var liste=[],i,p;
       for(i=0;i<rates.length;i++){
         p=rates[i].split(" × ");
         liste.push({a:Number(p[0]),b:Number(p[1])});
       }
-      lancerTables(liste);
-    });
+      lancerTables(liste); fileCalculs.rejeu=true;
+    },seance);
     return;
   }
   texte($("verifier-calcul"), ok?"Suivant ›":"Je continue ›");
@@ -989,7 +1077,7 @@ function repondreEtEst(choix){
     fileEtEst.faux(q.avant+" …");
   }
   majEtEst();
-  if(fini){ resultat("et / est : c'est acquis !",fileEtEst,"phrases",null); return; }
+  if(fini){ resultat("et / est : c'est acquis !",fileEtEst,"phrases",null,{type:"etest",nom:""}); return; }
   var b=creer("button","plein",ok?"Phrase suivante ›":"Je continue ›");
   b.type="button"; b.onclick=afficherEtEst;
   var r=creer("div","rangee"); r.style.marginTop="10px"; r.appendChild(b);
@@ -1014,6 +1102,7 @@ $("saisie-calcul").onfocus=function(){ garderVisible($("verifier-calcul")); };
 /* ===================================================================== */
 chargerListes();
 dessinerListes();
+dessinerCarnet();
 ecran("ec-accueil");
 
 })();

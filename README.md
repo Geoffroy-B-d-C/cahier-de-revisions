@@ -51,6 +51,15 @@ un autre appareil, il y ajoute les listes qui n'y sont pas déjà (il n'écrase 
 - page volontairement mono-thème (c'est une feuille de cahier), d'autant que
   `prefers-color-scheme` n'existe pas sur iOS 12.
 
+## Le carnet
+
+Chaque séance terminée (dictée, tables, et / est) est notée dans un carnet visible
+sur l'accueil : étoiles, liste, nombre d'erreurs, durée, date et heure de fin. Les
+séances du jour sont surlignées en vert et un badge « ✓ Faite aujourd'hui à… »
+s'affiche sur le bouton de l'exercice, pour que l'élève puisse montrer que c'est
+fait. Le carnet garde les 40 dernières séances ; « Effacer le carnet » dans la zone
+des parents le vide. Un rejeu des mots ratés n'est pas compté comme une séance.
+
 ## Mettre la page sur l'iPad
 
 GitHub Pages est actif sur `main` : <https://geoffroy-b-d-c.github.io/cahier-de-revisions/>

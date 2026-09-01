@@ -2,934 +2,1020 @@
 <html lang="fr">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Cahier de révisions</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Mes révisions">
+<meta name="format-detection" content="telephone=no">
+<title>Le cahier de Bérénice</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700&family=Rubik:wght@400;500;600&display=swap">
 <style>
+/* ------------------------------------------------------------------
+   Compatibilité iPad Air 1 / iOS 12.5.8 (Safari 12) :
+   pas de clamp(), pas de gap en flexbox, pas de inset, pas de :is().
+   prefers-color-scheme n'existe pas sur iOS 12 : le thème clair est le
+   thème par défaut complet, le bouton du bas force l'autre thème.
+   ------------------------------------------------------------------ */
 :root{
-  --paper:#F7F8FB; --paper-2:#FFFFFF; --paper-3:#EDF1F8;
-  --ink:#1F3055; --ink-soft:#57627C; --ink-faint:#8B94A8;
-  --seyes:#C6D5EC; --seyes-fort:#9BB3D9;
-  --rouge:#C7443C; --rouge-doux:#F6E2E0;
-  --vert:#2E7D5B; --vert-doux:#DFEFE7;
-  --ambre:#9C6410; --ambre-doux:#F6EEDD;
-  --trait:#D6DEEB; --ombre:rgba(31,48,85,.10);
-  --r:3px;
+  --fond:#F8FAF7; --carte:#FFFFFF; --carte2:#EFF4EF;
+  --encre:#15241B; --encre-doux:#5A6B60; --encre-pale:#8B9A90;
+  --vert:#1E6B49; --vert-clair:#DCEEE4;
+  --abricot:#D9631F; --abricot-clair:#FBE7D8;
+  --soleil:#EFB93F;
+  --rouge:#C2372C; --rouge-clair:#FAE2DF;
+  --trait:#DCE5DD; --ombre:rgba(21,36,27,.12);
 }
 @media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    --paper:#0F1622; --paper-2:#16202F; --paper-3:#1C283A;
-    --ink:#E6ECF7; --ink-soft:#9FADC4; --ink-faint:#71809A;
-    --seyes:#212C3E; --seyes-fort:#33445C;
-    --rouge:#E4776D; --rouge-doux:#33201F;
-    --vert:#63C296; --vert-doux:#16281F;
-    --ambre:#DBA84E; --ambre-doux:#2A2214;
-    --trait:#26334A; --ombre:rgba(0,0,0,.45);
+  :root:not([data-theme="clair"]){
+    --fond:#0E1512; --carte:#16201B; --carte2:#1D2A23;
+    --encre:#E7F0EA; --encre-doux:#9FB2A6; --encre-pale:#74897D;
+    --vert:#4FBB86; --vert-clair:#12291E;
+    --abricot:#F08A4B; --abricot-clair:#2B1B10;
+    --soleil:#F0C464;
+    --rouge:#E4776A; --rouge-clair:#2E1917;
+    --trait:#26332B; --ombre:rgba(0,0,0,.5);
   }
 }
-:root[data-theme="dark"]{
-  --paper:#0F1622; --paper-2:#16202F; --paper-3:#1C283A;
-  --ink:#E6ECF7; --ink-soft:#9FADC4; --ink-faint:#71809A;
-  --seyes:#212C3E; --seyes-fort:#33445C;
-  --rouge:#E4776D; --rouge-doux:#33201F;
-  --vert:#63C296; --vert-doux:#16281F;
-  --ambre:#DBA84E; --ambre-doux:#2A2214;
-  --trait:#26334A; --ombre:rgba(0,0,0,.45);
+:root[data-theme="sombre"]{
+  --fond:#0E1512; --carte:#16201B; --carte2:#1D2A23;
+  --encre:#E7F0EA; --encre-doux:#9FB2A6; --encre-pale:#74897D;
+  --vert:#4FBB86; --vert-clair:#12291E;
+  --abricot:#F08A4B; --abricot-clair:#2B1B10;
+  --soleil:#F0C464;
+  --rouge:#E4776A; --rouge-clair:#2E1917;
+  --trait:#26332B; --ombre:rgba(0,0,0,.5);
 }
 
 *{box-sizing:border-box}
 [hidden]{display:none !important}
 html{-webkit-text-size-adjust:100%}
 body{
-  margin:0; background:var(--paper); color:var(--ink);
-  font-family:"Familjen Grotesk","Segoe UI",Helvetica,Arial,sans-serif;
-  font-size:16px; line-height:1.5;
+  margin:0; background:var(--fond); color:var(--encre);
+  font-family:"Rubik","Helvetica Neue",Helvetica,Arial,sans-serif;
+  font-size:17px; line-height:1.45;
+  -webkit-font-smoothing:antialiased;
 }
-button,input,textarea,select{font:inherit;color:inherit}
-:focus-visible{outline:2px solid var(--rouge);outline-offset:2px;border-radius:2px}
+button,input{font-family:inherit;color:inherit;-webkit-appearance:none;appearance:none;border-radius:0}
+button{touch-action:manipulation;-webkit-tap-highlight-color:rgba(0,0,0,0);-webkit-user-select:none;user-select:none;cursor:pointer}
+:focus{outline:none}
+button:focus-visible,input:focus-visible{outline:3px solid var(--abricot);outline-offset:2px}
 @media (prefers-reduced-motion: reduce){*{animation:none !important;transition:none !important}}
 
-/* ---------- la feuille ---------- */
-.feuille{
-  position:relative; max-width:940px; margin:0 auto; min-height:100vh;
-  background:var(--paper-2);
-  border-left:1px solid var(--trait); border-right:1px solid var(--trait);
-  padding:0 clamp(18px,5vw,54px) 64px clamp(46px,7vw,90px);
-  isolation:isolate;
-}
-.feuille::before{ /* réglure Seyès : interlignes 2 mm, ligne forte 8 mm, verticales 8 mm */
-  content:""; position:absolute; inset:0; z-index:-1; pointer-events:none; opacity:.55;
-  background-image:
-    repeating-linear-gradient(to bottom, var(--seyes-fort) 0 1px, transparent 1px 28px),
-    repeating-linear-gradient(to bottom, var(--seyes) 0 1px, transparent 1px 7px),
-    repeating-linear-gradient(to right, var(--seyes) 0 1px, transparent 1px 28px);
-  background-position:0 96px, 0 96px, 0 0;
-  -webkit-mask-image:linear-gradient(to bottom, transparent 0, #000 96px);
-  mask-image:linear-gradient(to bottom, transparent 0, #000 96px);
-}
-.feuille::after{ /* filet de marge */
-  content:""; position:absolute; top:0; bottom:0; left:clamp(30px,5.2vw,64px);
-  width:1px; background:var(--rouge); opacity:.55; z-index:-1;
-}
+.page{max-width:760px;margin:0 auto;padding:18px 16px 40px}
+@media (min-width:700px){ body{font-size:18px} .page{padding:26px 22px 56px} }
 
-/* ---------- couverture ---------- */
-.couverture{padding:34px 0 10px;display:flex;flex-wrap:wrap;gap:20px;align-items:flex-end;justify-content:space-between}
-.titre{margin:0;font-size:clamp(30px,5.4vw,46px);font-weight:700;letter-spacing:-.02em;line-height:1.05;text-wrap:balance}
-.titre .amp{color:var(--rouge)}
-.sous-titre{margin:6px 0 0;color:var(--ink-soft);font-size:15px;max-width:46ch}
-.etiquette{
-  background:var(--paper-3);border:1px solid var(--trait);border-radius:var(--r);
-  padding:9px 12px;display:flex;align-items:center;gap:9px;box-shadow:0 1px 0 var(--ombre);
+/* ---------------- barre du haut ---------------- */
+.barre{display:flex;align-items:center;flex-wrap:wrap;margin:0 -5px 16px}
+.barre > *{margin:5px}
+.barre .titre-ecran{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:24px;line-height:1.1;margin:0;flex:1 1 auto}
+.retour{
+  background:var(--carte);border:2px solid var(--trait);color:var(--encre);
+  padding:10px 16px;border-radius:12px;font-size:16px;font-weight:500;min-height:48px;
 }
-.etiquette label{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint)}
-.etiquette input{
-  border:0;border-bottom:1px dashed var(--seyes-fort);background:transparent;
-  width:9.5em;padding:1px 2px;font-family:"Newsreader",Georgia,serif;font-size:17px;
-}
-.etiquette input::placeholder{color:var(--ink-faint);font-style:italic}
-
-/* ---------- onglets ---------- */
-.onglets{display:flex;gap:6px;margin:26px 0 0;border-bottom:2px solid var(--ink);align-items:flex-end}
-.onglet{
-  appearance:none;border:2px solid var(--ink);border-bottom:0;background:var(--paper-3);
-  color:var(--ink-soft);font-weight:600;font-size:14.5px;letter-spacing:.01em;
-  padding:9px 18px 8px;border-radius:8px 8px 0 0;cursor:pointer;transition:background .15s,color .15s,transform .15s;
-}
-.onglet:hover{color:var(--ink)}
-.onglet[aria-selected="true"]{background:var(--ink);color:var(--paper-2);transform:translateY(2px)}
-.onglet .num{font-family:"IBM Plex Mono",monospace;font-size:12px;opacity:.7;margin-right:7px}
-
-.panneau{padding-top:30px;animation:apparait .28s ease-out}
-@keyframes apparait{from{opacity:.4}to{opacity:1}}
-
-h2.consigne{
-  margin:0 0 4px;font-size:20px;font-weight:600;letter-spacing:-.01em;
-}
-.note{color:var(--ink-soft);font-size:14px;margin:0 0 22px;max-width:62ch}
-
-/* ---------- barre de réglages ---------- */
-.reglages{display:flex;flex-wrap:wrap;gap:22px;align-items:flex-start;
-  padding:14px 16px;background:var(--paper-3);border:1px solid var(--trait);border-radius:var(--r);margin-bottom:26px}
-.champ{display:flex;flex-direction:column;gap:7px}
-.champ > span{font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint)}
-.puces{display:flex;flex-wrap:wrap;gap:5px}
-.puce{
-  appearance:none;cursor:pointer;border:1px solid var(--trait);background:var(--paper-2);
-  color:var(--ink-soft);padding:5px 11px;border-radius:999px;font-size:13.5px;font-weight:500;
-  font-variant-numeric:tabular-nums;transition:.14s;
-}
-.puce:hover{border-color:var(--seyes-fort);color:var(--ink)}
-.puce[aria-pressed="true"],.puce.actif{background:var(--ink);border-color:var(--ink);color:var(--paper-2)}
-select.saisie,input.saisie{background:var(--paper-2);border:1px solid var(--trait);border-radius:var(--r);padding:6px 9px}
-
-/* ---------- boutons ---------- */
-.btn{
-  appearance:none;cursor:pointer;border:1px solid var(--ink);background:var(--ink);color:var(--paper-2);
-  padding:9px 17px;border-radius:var(--r);font-weight:600;font-size:14.5px;transition:.14s;
-}
-.btn:hover{opacity:.86}
-.btn.secondaire{background:transparent;color:var(--ink);border-color:var(--trait)}
-.btn.secondaire:hover{border-color:var(--ink);opacity:1}
-.btn.rouge{background:var(--rouge);border-color:var(--rouge);color:#fff}
-.btn:disabled{opacity:.4;cursor:not-allowed}
-.barre-actions{display:flex;flex-wrap:wrap;gap:9px;align-items:center}
-
-/* ---------- dictée ---------- */
-.pupitre{border:1px solid var(--trait);border-radius:var(--r);background:var(--paper-2);
-  box-shadow:0 1px 0 var(--ombre);overflow:hidden}
-.pupitre-tete{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;
-  padding:12px 16px;border-bottom:1px solid var(--trait);background:var(--paper-3)}
-.compteur{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-soft);letter-spacing:.02em}
-.pupitre-corps{padding:18px 16px}
-.ecoute{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-bottom:16px}
-.ecoutes{font-family:"IBM Plex Mono",monospace;font-size:12.5px;color:var(--ink-faint)}
-textarea.copie{
-  width:100%;min-height:112px;resize:vertical;padding:12px 14px;border:1px solid var(--trait);
-  border-radius:var(--r);background:var(--paper);
-  font-family:"Newsreader",Georgia,serif;font-size:19px;line-height:1.75;
-}
-textarea.copie::placeholder{color:var(--ink-faint);font-style:italic}
-.accents{display:flex;flex-wrap:wrap;gap:4px;margin:9px 0 16px}
-.accents button{
-  appearance:none;cursor:pointer;border:1px solid var(--trait);background:var(--paper-2);color:var(--ink);
-  width:32px;height:30px;border-radius:var(--r);font-family:"Newsreader",Georgia,serif;font-size:17px;
-}
-.accents button:hover{border-color:var(--seyes-fort);background:var(--paper-3)}
-
-.correction{margin-top:20px;border-top:1px dashed var(--trait);padding-top:18px}
-.verdict{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-bottom:14px}
-.verdict .note-sur{font-family:"IBM Plex Mono",monospace;font-size:28px;font-weight:600;font-variant-numeric:tabular-nums}
-.verdict .mention{font-size:14px;color:var(--ink-soft)}
-.copie-corrigee{font-family:"Newsreader",Georgia,serif;font-size:19px;line-height:2.5;
-  display:flex;flex-wrap:wrap;gap:0 8px;margin-bottom:16px}
-.mot{position:relative;display:inline-block}
-.mot.faux>.saisi,.mot.sup>.saisi{color:var(--rouge);text-decoration:line-through;text-decoration-color:var(--rouge)}
-.mot .attendu{
-  position:absolute;left:0;top:-1.15em;white-space:nowrap;
-  font-family:"Familjen Grotesk",sans-serif;font-size:12.5px;font-weight:600;color:var(--vert);
-}
-.mot.man{color:var(--vert);border-bottom:2px solid var(--vert)}
-.mot.man::after{content:" ↑";font-size:12px}
-.mot.sup .attendu{color:var(--rouge)}
-.phrase-modele{font-family:"Newsreader",Georgia,serif;font-size:18px;font-style:italic;
-  border-left:3px solid var(--vert);background:var(--vert-doux);padding:10px 14px;border-radius:0 var(--r) var(--r) 0;margin:0 0 12px}
-.astuce{background:var(--ambre-doux);border-left:3px solid var(--ambre);padding:10px 14px;
-  border-radius:0 var(--r) var(--r) 0;font-size:14.5px;color:var(--ink);margin:0 0 16px}
-.astuce b{color:var(--ambre);text-transform:uppercase;font-size:11px;letter-spacing:.09em;display:block;margin-bottom:3px}
-.avertissement{background:var(--rouge-doux);border-left:3px solid var(--rouge);padding:10px 14px;
-  border-radius:0 var(--r) var(--r) 0;font-size:14px;margin:0 0 16px}
-
-.releve{margin-top:24px;border-top:1px solid var(--trait);padding-top:16px}
-.releve h3{margin:0 0 10px;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint)}
-.releve ol{margin:0;padding-left:1.4em;font-size:14.5px;color:var(--ink-soft)}
-.releve li{margin-bottom:5px;font-variant-numeric:tabular-nums}
-.releve b{color:var(--ink);font-family:"IBM Plex Mono",monospace}
-
-/* ---------- tables ---------- */
-.ardoise{
-  border:2px solid var(--ink);border-radius:var(--r);background:var(--paper-2);
-  padding:28px 20px 24px;text-align:center;box-shadow:0 2px 0 var(--ombre);
-}
-.progression{height:4px;background:var(--paper-3);border-radius:999px;overflow:hidden;margin-bottom:22px}
-.progression i{display:block;height:100%;background:var(--ink);width:0;transition:width .25s ease}
-.calcul{font-family:"IBM Plex Mono",monospace;font-size:clamp(40px,9vw,68px);font-weight:500;
-  letter-spacing:-.02em;line-height:1;margin:0 0 20px;font-variant-numeric:tabular-nums}
-.calcul .signe{color:var(--rouge)}
-.reponse{
-  width:5ch;text-align:center;font-family:"IBM Plex Mono",monospace;font-size:36px;font-weight:600;
-  padding:6px 4px;border:0;border-bottom:3px solid var(--ink);background:transparent;
+.retour:active{background:var(--carte2)}
+.compte{
+  font-size:15px;font-weight:500;color:var(--encre-doux);white-space:nowrap;
   font-variant-numeric:tabular-nums;
 }
-.reponse:focus{outline:none;border-bottom-color:var(--rouge)}
-.ardoise.juste{border-color:var(--vert);background:var(--vert-doux)}
-.ardoise.faux{border-color:var(--rouge);background:var(--rouge-doux)}
-.retour{min-height:26px;margin:14px 0 0;font-size:15px;font-weight:600}
-.retour.juste{color:var(--vert)}
-.retour.faux{color:var(--rouge)}
-.tableau-bord{display:flex;justify-content:center;gap:26px;margin-top:20px;flex-wrap:wrap}
-.mesure{display:flex;flex-direction:column;gap:2px}
-.mesure b{font-family:"IBM Plex Mono",monospace;font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
-.mesure span{font-size:10.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint)}
 
-.bilan{border:2px solid var(--ink);border-radius:var(--r);background:var(--paper-2);padding:26px 22px;box-shadow:0 2px 0 var(--ombre)}
-.bilan h3{margin:0 0 2px;font-size:22px}
-.bilan .score{font-family:"IBM Plex Mono",monospace;font-size:52px;font-weight:600;line-height:1;margin:14px 0 4px;font-variant-numeric:tabular-nums}
-.a-revoir{display:flex;flex-wrap:wrap;gap:6px;margin:16px 0 20px}
-.a-revoir span{font-family:"IBM Plex Mono",monospace;font-size:14px;background:var(--rouge-doux);color:var(--rouge);
-  border:1px solid var(--rouge);padding:4px 9px;border-radius:var(--r);font-variant-numeric:tabular-nums}
+/* ---------------- accueil ---------------- */
+.entete{margin-bottom:22px}
+.entete h1{font-family:"Baloo 2",sans-serif;font-weight:700;margin:0;line-height:1.05;font-size:34px}
+@media (min-width:700px){ .entete h1{font-size:44px} }
+.entete p{margin:6px 0 0;color:var(--encre-doux);font-size:16px}
+.entete .echeance{
+  display:inline-block;margin-top:10px;background:var(--soleil);color:#3A2A05;
+  font-weight:600;font-size:15px;padding:5px 12px;border-radius:999px;
+}
 
-details.pythagore{margin-top:26px;border-top:1px solid var(--trait);padding-top:14px}
-details.pythagore summary{cursor:pointer;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-faint);font-weight:600}
-details.pythagore summary:hover{color:var(--ink)}
-.grille-wrap{overflow-x:auto;margin-top:14px}
-table.pythagore{border-collapse:collapse;font-family:"IBM Plex Mono",monospace;font-size:13px;font-variant-numeric:tabular-nums}
-table.pythagore th,table.pythagore td{border:1px solid var(--trait);padding:5px 8px;text-align:center;min-width:38px}
-table.pythagore th{background:var(--paper-3);color:var(--ink-soft);font-weight:600}
-table.pythagore tr.vive td{background:var(--paper-3);color:var(--ink);font-weight:600}
-table.pythagore tr.vive th{background:var(--ink);color:var(--paper-2)}
+.tuiles{display:grid;grid-template-columns:1fr;grid-gap:14px;gap:14px}
+@media (min-width:640px){ .tuiles{grid-template-columns:1fr 1fr} }
+.tuile{
+  display:block;width:100%;text-align:left;background:var(--carte);
+  border:2px solid var(--trait);border-radius:18px;padding:20px 18px;
+  box-shadow:0 2px 0 var(--ombre);transition:border-color .15s,transform .1s;
+}
+.tuile:active{transform:translateY(1px)}
+.tuile .pastille{
+  display:inline-block;width:44px;height:44px;line-height:44px;text-align:center;
+  border-radius:14px;font-size:24px;margin-bottom:10px;background:var(--vert-clair);
+}
+.tuile.b .pastille{background:var(--abricot-clair)}
+.tuile.c .pastille{background:var(--carte2)}
+.tuile h2{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:23px;margin:0 0 3px}
+.tuile p{margin:0;color:var(--encre-doux);font-size:15.5px}
+.tuile .etat{display:block;margin-top:9px;font-size:14px;font-weight:600;color:var(--vert)}
+.tuile.grande{grid-column:1 / -1;border-color:var(--vert)}
 
-footer{margin-top:46px;padding-top:16px;border-top:1px solid var(--trait);
-  display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between;align-items:center;
-  font-size:12.5px;color:var(--ink-faint)}
-footer .theme{appearance:none;border:1px solid var(--trait);background:transparent;color:var(--ink-soft);
-  cursor:pointer;padding:5px 11px;border-radius:999px;font-size:12.5px}
-footer .theme:hover{border-color:var(--ink);color:var(--ink)}
+/* ---------------- progression ---------------- */
+.jauge{height:10px;background:var(--carte2);border-radius:999px;overflow:hidden;margin-bottom:18px}
+.jauge i{display:block;height:100%;background:var(--vert);width:0;transition:width .3s ease}
+
+/* ---------------- carte d'exercice ---------------- */
+.carte{
+  background:var(--carte);border:2px solid var(--trait);border-radius:20px;
+  padding:20px 18px;box-shadow:0 2px 0 var(--ombre);
+}
+@media (min-width:700px){ .carte{padding:26px 24px} }
+.carte.juste{border-color:var(--vert);background:var(--vert-clair)}
+.carte.faux{border-color:var(--rouge);background:var(--rouge-clair)}
+.consigne{margin:0 0 16px;font-size:17px;color:var(--encre-doux)}
+
+.rangee{display:flex;flex-wrap:wrap;align-items:center;margin:-5px}
+.rangee > *{margin:5px}
+
+.btn{
+  border:2px solid var(--vert);background:var(--vert);color:#fff;
+  padding:13px 20px;border-radius:14px;font-size:17px;font-weight:600;min-height:52px;
+  transition:opacity .12s,transform .1s;
+}
+.btn:active{transform:translateY(1px);opacity:.85}
+.btn[disabled]{opacity:.35}
+.btn.secondaire{background:var(--carte);color:var(--encre);border-color:var(--trait)}
+.btn.ecoute{background:var(--abricot);border-color:var(--abricot);font-size:20px;padding:15px 26px;min-height:60px}
+.btn.grand{width:100%;justify-content:center;text-align:center;font-size:19px;min-height:58px}
+
+.aide{
+  margin:16px 0 0;padding:14px 16px;background:var(--carte2);border-radius:14px;
+  font-family:"Baloo 2",sans-serif;font-weight:600;text-align:center;
+}
+.aide .syllabes{font-size:30px;letter-spacing:.02em;color:var(--vert)}
+.aide .motentier{font-size:32px;letter-spacing:.01em}
+.aide small{display:block;font-family:"Rubik",sans-serif;font-weight:400;font-size:14px;color:var(--encre-doux);margin-top:4px}
+
+label.etiq{display:block;font-size:14px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--encre-pale);margin:20px 0 8px}
+input.reponse{
+  width:100%;border:2px solid var(--trait);background:var(--fond);border-radius:14px;
+  padding:14px 16px;font-size:26px;font-family:"Baloo 2",sans-serif;font-weight:600;
+  min-height:60px;
+}
+input.reponse:focus{border-color:var(--abricot)}
+input.reponse[disabled]{opacity:.75}
+
+.clavier{display:flex;flex-wrap:wrap;margin:8px -4px 0}
+.clavier button{
+  margin:4px;min-width:48px;min-height:48px;border:2px solid var(--trait);background:var(--carte);
+  border-radius:12px;font-size:21px;font-family:"Baloo 2",sans-serif;font-weight:600;
+}
+.clavier button:active{background:var(--carte2)}
+
+/* ---------------- retour de correction ---------------- */
+.verdict{margin-top:18px}
+.verdict .titre{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:26px;margin:0 0 10px}
+.verdict .titre.ok{color:var(--vert)}
+.verdict .titre.ko{color:var(--rouge)}
+.ligne-diff{margin:0 0 8px;font-size:15px;color:var(--encre-doux)}
+.ligne-diff b{
+  display:block;font-family:"Baloo 2",sans-serif;font-weight:600;font-size:28px;
+  color:var(--encre);letter-spacing:.02em;word-break:break-word;margin-top:2px;
+}
+.ligne-diff .sup{color:var(--rouge);text-decoration:line-through}
+.ligne-diff .man{color:var(--vert);border-bottom:4px solid var(--vert)}
+.ligne-diff .vide{color:var(--rouge);opacity:.6}
+
+.calcul{
+  font-family:"Rubik",sans-serif;font-weight:500;text-align:center;margin:6px 0 14px;
+  font-size:56px;line-height:1.1;font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+}
+@media (min-width:700px){ .calcul{font-size:72px} }
+.calcul .signe{color:var(--abricot)}
+input.chiffre{
+  width:100%;max-width:220px;margin:0 auto;display:block;text-align:center;
+  font-size:44px;font-family:"Rubik",sans-serif;font-weight:600;font-variant-numeric:tabular-nums;
+  border:2px solid var(--trait);background:var(--fond);border-radius:14px;padding:8px 10px;min-height:70px;
+}
+input.chiffre:focus{border-color:var(--abricot)}
+
+.phrase{
+  font-family:"Baloo 2",sans-serif;font-weight:600;font-size:26px;line-height:1.5;
+  margin:0 0 18px;text-align:center;
+}
+.phrase .trou{display:inline-block;min-width:2.6em;border-bottom:4px solid var(--abricot);color:var(--abricot)}
+.deux-choix{display:grid;grid-template-columns:1fr 1fr;grid-gap:12px;gap:12px}
+.deux-choix button{
+  font-family:"Baloo 2",sans-serif;font-weight:700;font-size:30px;min-height:76px;
+  border:2px solid var(--trait);background:var(--carte);border-radius:16px;
+}
+.deux-choix button:active{background:var(--carte2)}
+
+.astuce{
+  margin-top:16px;background:var(--abricot-clair);border-left:5px solid var(--abricot);
+  padding:12px 14px;border-radius:0 12px 12px 0;font-size:15.5px;
+}
+.astuce em{font-style:normal;font-weight:600;color:var(--encre)}
+.astuce b{display:block;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--abricot);margin-bottom:3px}
+
+/* ---------------- bilan ---------------- */
+.bilan{text-align:center;padding:30px 20px}
+.bilan .medaille{font-size:64px;line-height:1;margin-bottom:6px}
+.bilan h2{font-family:"Baloo 2",sans-serif;font-weight:700;font-size:32px;margin:0 0 6px}
+.bilan p{margin:0 0 4px;color:var(--encre-doux)}
+.bilan .chiffres{
+  display:flex;justify-content:center;flex-wrap:wrap;margin:20px -10px 22px;
+}
+.bilan .chiffres > div{margin:0 10px}
+.bilan .chiffres b{display:block;font-size:30px;font-weight:600;font-variant-numeric:tabular-nums}
+.bilan .chiffres span{font-size:13px;letter-spacing:.05em;text-transform:uppercase;color:var(--encre-pale)}
+.liste-mots{display:flex;flex-wrap:wrap;justify-content:center;margin:0 -4px 18px}
+.liste-mots span{
+  margin:4px;background:var(--rouge-clair);color:var(--rouge);border:1px solid var(--rouge);
+  padding:6px 12px;border-radius:999px;font-size:15px;font-weight:500;
+}
+
+/* ---------------- réglages / pied ---------------- */
+.filtres{margin-top:20px}
+.filtres .etiq{margin-top:0}
+.puces{display:flex;flex-wrap:wrap;margin:-4px}
+.puce{
+  margin:4px;border:2px solid var(--trait);background:var(--carte);color:var(--encre-doux);
+  padding:9px 15px;border-radius:999px;font-size:15.5px;font-weight:500;min-height:44px;
+  font-variant-numeric:tabular-nums;
+}
+.puce.actif{background:var(--vert);border-color:var(--vert);color:#fff}
+
+.pied{margin-top:30px;padding-top:16px;border-top:1px solid var(--trait);
+  display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.pied > *{margin:5px 0}
+.pied small{color:var(--encre-pale);font-size:13px}
+.pied button{background:none;border:2px solid var(--trait);color:var(--encre-doux);
+  padding:8px 14px;border-radius:999px;font-size:14px;min-height:44px}
+.pied input{border:2px solid var(--trait);background:var(--carte);border-radius:10px;
+  padding:8px 10px;font-size:16px;width:9em;min-height:44px}
+
+.alerte{background:var(--rouge-clair);border-left:5px solid var(--rouge);padding:12px 14px;
+  border-radius:0 12px 12px 0;font-size:15.5px;margin-bottom:16px}
 </style>
 </head>
 <body>
+<div class="page">
 
-<div class="feuille">
-  <header class="couverture">
-    <div>
-      <h1 class="titre">Cahier de révisions</h1>
-      <p class="sous-titre">Deux exercices à faire dans l'ordre qu'on veut : la dictée, puis les tables. Du CE1 au CM2.</p>
-    </div>
-    <div class="etiquette">
-      <label for="nom">Ce cahier appartient à</label>
-      <input id="nom" type="text" placeholder="ton prénom" autocomplete="off" spellcheck="false">
-    </div>
-  </header>
+<!-- ==================== ACCUEIL ==================== -->
+<section class="ecran" id="ecran-accueil">
+  <div class="entete">
+    <h1 id="titre-accueil">Le cahier de Bérénice</h1>
+    <p>Mots à apprendre — CM1-CM2</p>
+    <span class="echeance">Pour le jeudi 10 septembre 2026</span>
+  </div>
 
-  <nav class="onglets" role="tablist" aria-label="Exercices">
-    <button class="onglet" id="tab-dictee" role="tab" aria-selected="true" aria-controls="panneau-dictee"><span class="num">1</span>Dictée</button>
-    <button class="onglet" id="tab-tables" role="tab" aria-selected="false" aria-controls="panneau-tables" tabindex="-1"><span class="num">2</span>Tables de multiplication</button>
-  </nav>
+  <div class="tuiles">
+    <button class="tuile grande" type="button" id="vers-mots">
+      <span class="pastille">🔊</span>
+      <h2>Mes mots</h2>
+      <p>J'écoute le mot, je l'écris. Un mot raté revient plus tard, jusqu'à ce qu'il soit juste.</p>
+      <span class="etat" id="etat-mots">41 mots</span>
+    </button>
+    <button class="tuile b" type="button" id="vers-tables">
+      <span class="pastille">✖️</span>
+      <h2>Mes tables</h2>
+      <p>Même principe : un calcul raté revient jusqu'à ce qu'il soit juste.</p>
+      <span class="etat" id="etat-tables">tables de 2 à 9</span>
+    </button>
+    <button class="tuile c" type="button" id="vers-etest">
+      <span class="pastille">✏️</span>
+      <h2>et / est</h2>
+      <p>Le « Revoir » de la fiche : choisir entre <b>et</b> et <b>est</b> dans la phrase.</p>
+      <span class="etat">8 phrases</span>
+    </button>
+  </div>
 
-  <!-- ============ EXERCICE 1 : DICTÉE ============ -->
-  <section class="panneau" id="panneau-dictee" role="tabpanel" aria-labelledby="tab-dictee">
-    <h2 class="consigne">Écoute la phrase, écris-la, puis fais-toi corriger.</h2>
-    <p class="note">La phrase est lue à voix haute par l'ordinateur. Tu peux la réécouter autant de fois que tu veux, et la ralentir. Les majuscules et les accents comptent ; la ponctuation aussi.</p>
+  <div class="pied">
+    <input id="prenom" type="text" aria-label="Prénom" autocomplete="off" spellcheck="false" autocapitalize="words">
+    <small>Tout reste sur l'iPad. Aucune donnée n'est envoyée.</small>
+    <button type="button" id="bascule-theme">Thème</button>
+  </div>
+</section>
 
-    <div class="reglages">
-      <div class="champ">
-        <span>Niveau</span>
-        <div class="puces" id="niveaux"></div>
-      </div>
-      <div class="champ">
-        <span>Voix</span>
-        <select class="saisie" id="voix"><option>Voix par défaut</option></select>
-      </div>
-    </div>
+<!-- ==================== MOTS ==================== -->
+<section class="ecran" id="ecran-mots" hidden>
+  <div class="barre">
+    <button class="retour" type="button" data-accueil>‹ Accueil</button>
+    <h2 class="titre-ecran">Mes mots</h2>
+    <span class="compte" id="compte-mots">0 / 41</span>
+  </div>
+  <div class="jauge"><i id="jauge-mots"></i></div>
 
-    <div class="pupitre">
-      <div class="pupitre-tete">
-        <strong id="titre-dictee">Phrase 1</strong>
-        <span class="compteur" id="compteur-dictee">1 / 5 · série en cours</span>
-      </div>
-      <div class="pupitre-corps">
-        <div id="alerte-voix" hidden class="avertissement"></div>
+  <div id="alerte-voix" class="alerte" hidden></div>
 
-        <div class="ecoute">
-          <button class="btn" id="ecouter">Écouter la phrase</button>
-          <button class="btn secondaire" id="ecouter-lent">Plus lentement</button>
-          <button class="btn secondaire" id="montrer">Montrer la phrase</button>
-          <span class="ecoutes" id="nb-ecoutes">0 écoute</span>
-        </div>
-
-        <p class="phrase-modele" id="phrase-visible" hidden></p>
-
-        <label for="copie" style="display:block;font-size:11px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:6px">Ta copie</label>
-        <textarea class="copie" id="copie" placeholder="Écris ici la phrase que tu entends…" spellcheck="false" autocomplete="off" autocorrect="off"></textarea>
-        <div class="accents" id="accents" aria-label="Lettres accentuées"></div>
-
-        <div class="barre-actions">
-          <button class="btn rouge" id="corriger">Corriger</button>
-          <button class="btn secondaire" id="suivante" disabled>Phrase suivante</button>
-          <button class="btn secondaire" id="recommencer-dictee">Nouvelle série</button>
-        </div>
-
-        <div class="correction" id="correction" hidden></div>
-      </div>
+  <div class="carte" id="carte-mots">
+    <p class="consigne">Écoute le mot, puis écris-le en entier, avec son petit mot devant (un, une, le…).</p>
+    <div class="rangee">
+      <button class="btn ecoute" type="button" id="ecouter">🔊 Écouter</button>
+      <button class="btn secondaire" type="button" id="ecouter-lent">🐢 Plus lentement</button>
+      <button class="btn secondaire" type="button" id="syllabes">✂️ Syllabes</button>
+      <button class="btn secondaire" type="button" id="montrer">👁 Montrer</button>
     </div>
 
-    <div class="releve" id="releve-dictee" hidden>
-      <h3>Relevé de la série</h3>
-      <ol id="liste-releve"></ol>
-    </div>
-  </section>
+    <div class="aide" id="aide-mot" hidden></div>
 
-  <!-- ============ EXERCICE 2 : TABLES ============ -->
-  <section class="panneau" id="panneau-tables" role="tabpanel" aria-labelledby="tab-tables" hidden>
-    <h2 class="consigne">Réponds le plus vite possible, sans te tromper.</h2>
-    <p class="note">Choisis les tables à réviser, puis tape ta réponse et valide avec la touche Entrée. À la fin, tu pourras rejouer uniquement les calculs ratés.</p>
+    <label class="etiq" for="saisie-mot">J'écris le mot</label>
+    <input class="reponse" id="saisie-mot" type="text"
+           autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false"
+           enterkeyhint="done" placeholder="…">
+    <div class="clavier" id="clavier-accents"></div>
 
-    <div class="reglages">
-      <div class="champ">
-        <span>Tables à réviser</span>
-        <div class="puces" id="choix-tables"></div>
-      </div>
-      <div class="champ">
-        <span>Longueur</span>
-        <div class="puces" id="choix-longueur"></div>
-      </div>
-      <div class="champ">
-        <span>Multiplicateurs</span>
-        <div class="puces" id="choix-max"></div>
-      </div>
+    <div class="rangee" style="margin-top:16px">
+      <button class="btn grand" type="button" id="verifier-mot">Vérifier</button>
     </div>
 
-    <div id="zone-jeu">
-      <div class="ardoise" id="ardoise">
-        <div class="progression"><i id="barre"></i></div>
-        <p class="calcul" id="calcul">7 <span class="signe">×</span> 8</p>
-        <label for="reponse" style="position:absolute;left:-9999px">Ta réponse</label>
-        <input class="reponse" id="reponse" type="text" inputmode="numeric" autocomplete="off" maxlength="4">
-        <p class="retour" id="retour" role="status" aria-live="polite"></p>
-        <div class="tableau-bord">
-          <div class="mesure"><b id="m-score">0</b><span>Bonnes réponses</span></div>
-          <div class="mesure"><b id="m-serie">0</b><span>Série sans faute</span></div>
-          <div class="mesure"><b id="m-temps">0 s</b><span>Chrono</span></div>
-          <div class="mesure"><b id="m-record">—</b><span>Record</span></div>
-        </div>
-      </div>
-      <div class="barre-actions" style="margin-top:16px">
-        <button class="btn" id="demarrer">Commencer la série</button>
-        <button class="btn secondaire" id="arreter" hidden>Arrêter</button>
-      </div>
+    <div class="verdict" id="verdict-mot" hidden></div>
+  </div>
+
+  <div class="filtres">
+    <label class="etiq">Ce que je révise</label>
+    <div class="puces" id="puces-categories"></div>
+  </div>
+
+  <div class="carte bilan" id="bilan-mots" hidden></div>
+</section>
+
+<!-- ==================== TABLES ==================== -->
+<section class="ecran" id="ecran-tables" hidden>
+  <div class="barre">
+    <button class="retour" type="button" data-accueil>‹ Accueil</button>
+    <h2 class="titre-ecran">Mes tables</h2>
+    <span class="compte" id="compte-tables">0 / 0</span>
+  </div>
+  <div class="jauge"><i id="jauge-tables"></i></div>
+
+  <div class="carte" id="carte-tables">
+    <p class="consigne">Écris le résultat, puis appuie sur Vérifier.</p>
+    <p class="calcul" id="calcul">7 <span class="signe">×</span> 8</p>
+    <label class="etiq" for="saisie-calcul" style="text-align:center">Ma réponse</label>
+    <input class="chiffre" id="saisie-calcul" type="tel" pattern="[0-9]*"
+           autocomplete="off" autocorrect="off" spellcheck="false" maxlength="4" enterkeyhint="done">
+    <div class="rangee" style="margin-top:16px">
+      <button class="btn grand" type="button" id="verifier-calcul">Vérifier</button>
     </div>
+    <div class="verdict" id="verdict-calcul" hidden></div>
+  </div>
 
-    <div class="bilan" id="bilan" hidden></div>
+  <div class="filtres">
+    <label class="etiq">Les tables que je révise</label>
+    <div class="puces" id="puces-tables"></div>
+  </div>
 
-    <details class="pythagore">
-      <summary>Voir la table de Pythagore</summary>
-      <div class="grille-wrap" id="grille-pythagore"></div>
-    </details>
-  </section>
+  <div class="carte bilan" id="bilan-tables" hidden></div>
+</section>
 
-  <footer>
-    <span>Cahier de révisions — dictées et tables, hors connexion une fois la page chargée.</span>
-    <button class="theme" id="bascule-theme">Thème : automatique</button>
-  </footer>
+<!-- ==================== ET / EST ==================== -->
+<section class="ecran" id="ecran-etest" hidden>
+  <div class="barre">
+    <button class="retour" type="button" data-accueil>‹ Accueil</button>
+    <h2 class="titre-ecran">et / est</h2>
+    <span class="compte" id="compte-etest">0 / 8</span>
+  </div>
+  <div class="jauge"><i id="jauge-etest"></i></div>
+
+  <div class="carte" id="carte-etest">
+    <p class="consigne">Quel mot faut-il écrire dans le trou&nbsp;?</p>
+    <p class="phrase" id="phrase-etest"></p>
+    <div class="deux-choix">
+      <button type="button" data-choix="et">et</button>
+      <button type="button" data-choix="est">est</button>
+    </div>
+    <div class="astuce">
+      <b>Le truc pour ne pas se tromper</b>
+      Si on peut remplacer par <em>était</em>, c'est <em>est</em>. Si on peut remplacer par <em>et puis</em>, c'est <em>et</em>.
+    </div>
+    <div class="verdict" id="verdict-etest" hidden></div>
+  </div>
+
+  <div class="carte bilan" id="bilan-etest" hidden></div>
+</section>
+
 </div>
 
 <script>
 (function(){
 "use strict";
 
-/* ============================================================
-   Mémoire locale (tolérante : navigation privée, stockage bloqué)
-   ============================================================ */
-var Memoire = {
-  lire: function(cle, defaut){
-    try{ var v = localStorage.getItem("cdr."+cle); return v===null?defaut:JSON.parse(v); }
+/* =========================================================
+   Petits utilitaires
+   ========================================================= */
+function $(id){ return document.getElementById(id); }
+function melanger(t){
+  var i,j,x;
+  for(i=t.length-1;i>0;i--){ j=Math.floor(Math.random()*(i+1)); x=t[i]; t[i]=t[j]; t[j]=x; }
+  return t;
+}
+function vider(el){ while(el.firstChild) el.removeChild(el.firstChild); }
+function creer(balise, classe, texte){
+  var e=document.createElement(balise);
+  if(classe) e.className=classe;
+  if(texte!==undefined && texte!==null) e.appendChild(document.createTextNode(texte));
+  return e;
+}
+var Memoire={
+  lire:function(cle,defaut){
+    try{ var v=localStorage.getItem("berenice."+cle); return v===null?defaut:JSON.parse(v); }
     catch(e){ return defaut; }
   },
-  ecrire: function(cle, valeur){
-    try{ localStorage.setItem("cdr."+cle, JSON.stringify(valeur)); }catch(e){}
+  ecrire:function(cle,valeur){
+    try{ localStorage.setItem("berenice."+cle, JSON.stringify(valeur)); }catch(e){}
   }
 };
 
-var $ = function(id){ return document.getElementById(id); };
-var melanger = function(t){
-  for(var i=t.length-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var x=t[i]; t[i]=t[j]; t[j]=x; }
-  return t;
-};
+/* =========================================================
+   Les mots de la fiche du 10 septembre 2026
+   s = découpage en syllabes (aide affichée à la demande)
+   ========================================================= */
+var MOTS=[
+ {c:"Noms",m:"un chimpanzé",s:"chim·pan·zé"},
+ {c:"Noms",m:"un primate",s:"pri·mate"},
+ {c:"Noms",m:"un inventeur",s:"in·ven·teur"},
+ {c:"Noms",m:"un singe",s:"singe"},
+ {c:"Noms",m:"un outil",s:"ou·til"},
+ {c:"Noms",m:"un insecte",s:"in·secte"},
+ {c:"Noms",m:"une séance",s:"sé·ance"},
+ {c:"Noms",m:"une branche",s:"branche"},
+ {c:"Noms",m:"un paon",s:"paon"},
+ {c:"Noms",m:"une récompense",s:"ré·com·pense"},
+ {c:"Noms",m:"une fourmi",s:"four·mi"},
+ {c:"Noms",m:"un fruit",s:"fruit"},
+ {c:"Noms",m:"le colobe",s:"co·lobe"},
+ {c:"Noms",m:"un cri",s:"cri"},
+ {c:"Noms",m:"un camp",s:"camp"},
+ {c:"Noms",m:"un bâton",s:"bâ·ton"},
+ {c:"Noms",m:"un obstacle",s:"obs·tacle"},
+ {c:"Noms",m:"un ruisseau",s:"ruis·seau"},
+ {c:"Adjectifs",m:"omnivore",s:"om·ni·vore"},
+ {c:"Adjectifs",m:"bavard",s:"ba·vard"},
+ {c:"Adjectifs",m:"rouge",s:"rouge"},
+ {c:"Adjectifs",m:"petit",s:"pe·tit"},
+ {c:"Adjectifs",m:"intelligent",s:"in·tel·li·gent"},
+ {c:"Adjectifs",m:"important",s:"im·por·tant"},
+ {c:"Verbes",m:"communiquer",s:"com·mu·ni·quer"},
+ {c:"Verbes",m:"entrer",s:"en·trer"},
+ {c:"Verbes",m:"manger",s:"man·ger"},
+ {c:"Verbes",m:"franchir",s:"fran·chir"},
+ {c:"Verbes",m:"inventer",s:"in·ven·ter"},
+ {c:"Verbes",m:"tomber",s:"tom·ber"},
+ {c:"Verbes",m:"fabriquer",s:"fa·bri·quer"},
+ {c:"Verbes",m:"utiliser",s:"u·ti·li·ser"},
+ {c:"Verbes",m:"tenter de",s:"ten·ter de"},
+ {c:"Verbes",m:"il prend",s:"il prend"},
+ {c:"Mots invariables",m:"aucun",s:"au·cun"},
+ {c:"Mots invariables",m:"souvent",s:"sou·vent"},
+ {c:"Mots invariables",m:"mais",s:"mais"},
+ {c:"Mots invariables",m:"également",s:"é·ga·le·ment"},
+ {c:"Mots invariables",m:"soudain",s:"sou·dain"},
+ {c:"Mots invariables",m:"sans",s:"sans"},
+ {c:"Mots invariables",m:"très",s:"très"}
+];
+var CATEGORIES=["Noms","Adjectifs","Verbes","Mots invariables"];
 
-/* ============================================================
-   Onglets
-   ============================================================ */
-var onglets = [$("tab-dictee"), $("tab-tables")];
-var panneaux = [$("panneau-dictee"), $("panneau-tables")];
-function ouvrirOnglet(i){
-  onglets.forEach(function(o,k){
-    o.setAttribute("aria-selected", k===i ? "true" : "false");
-    o.tabIndex = k===i ? 0 : -1;
-    panneaux[k].hidden = k!==i;
-  });
-  Memoire.ecrire("onglet", i);
+var ET_EST=[
+ {avant:"Le chimpanzé",apres:"très intelligent.",r:"est"},
+ {avant:"Il prend un bâton",apres:"franchit le ruisseau.",r:"et"},
+ {avant:"La fourmi",apres:"un insecte.",r:"est"},
+ {avant:"Il utilise un outil",apres:"une branche.",r:"et"},
+ {avant:"Ce singe",apres:"omnivore.",r:"est"},
+ {avant:"Il tente de manger",apres:"il tombe.",r:"et"},
+ {avant:"Le colobe",apres:"un primate.",r:"est"},
+ {avant:"Elle invente",apres:"fabrique un outil.",r:"et"}
+];
+
+/* =========================================================
+   Écrans
+   ========================================================= */
+var ECRANS=["ecran-accueil","ecran-mots","ecran-tables","ecran-etest"];
+function montrer(id){
+  for(var i=0;i<ECRANS.length;i++) $(ECRANS[i]).hidden = (ECRANS[i]!==id);
+  try{ window.scrollTo(0,0); }catch(e){}
 }
-onglets.forEach(function(o,i){
-  o.addEventListener("click", function(){ ouvrirOnglet(i); });
-  o.addEventListener("keydown", function(e){
-    if(e.key==="ArrowRight"||e.key==="ArrowLeft"){
-      e.preventDefault();
-      var j = (i + (e.key==="ArrowRight"?1:onglets.length-1)) % onglets.length;
-      ouvrirOnglet(j); onglets[j].focus();
-    }
-  });
-});
+var boutonsRetour=document.querySelectorAll("[data-accueil]");
+for(var br=0;br<boutonsRetour.length;br++){
+  boutonsRetour[br].onclick=function(){ arreterVoix(); montrer("ecran-accueil"); rafraichirAccueil(); };
+}
 
-/* Prénom sur l'étiquette */
-var champNom = $("nom");
-champNom.value = Memoire.lire("nom","") || "";
-champNom.addEventListener("input", function(){ Memoire.ecrire("nom", champNom.value); });
+/* Prénom */
+var prenom=Memoire.lire("prenom","Bérénice");
+$("prenom").value=prenom;
+function appliquerPrenom(){
+  $("titre-accueil").firstChild.nodeValue = prenom ? ("Le cahier de "+prenom) : "Mon cahier";
+}
+$("prenom").oninput=function(){
+  prenom=this.value.replace(/\s+/g," ").replace(/^\s/,"");
+  Memoire.ecrire("prenom",prenom); appliquerPrenom();
+};
+appliquerPrenom();
 
-/* Thème */
-var modesTheme = ["auto","light","dark"];
-var libellesTheme = {auto:"Thème : automatique", light:"Thème : clair", dark:"Thème : sombre"};
-var theme = Memoire.lire("theme","auto");
+/* Thème : sur iOS 12, prefers-color-scheme n'existe pas, ce bouton fait tout. */
+var THEMES=["auto","clair","sombre"];
+var NOMS_THEME={auto:"Thème : auto",clair:"Thème : clair",sombre:"Thème : sombre"};
+var theme=Memoire.lire("theme","auto");
 function appliquerTheme(){
   if(theme==="auto") document.documentElement.removeAttribute("data-theme");
-  else document.documentElement.setAttribute("data-theme", theme);
-  $("bascule-theme").textContent = libellesTheme[theme];
+  else document.documentElement.setAttribute("data-theme",theme);
+  vider($("bascule-theme"));
+  $("bascule-theme").appendChild(document.createTextNode(NOMS_THEME[theme]));
 }
-$("bascule-theme").addEventListener("click", function(){
-  theme = modesTheme[(modesTheme.indexOf(theme)+1) % modesTheme.length];
-  Memoire.ecrire("theme", theme); appliquerTheme();
-});
+$("bascule-theme").onclick=function(){
+  var i=THEMES.indexOf(theme);
+  theme=THEMES[(i+1)%THEMES.length];
+  Memoire.ecrire("theme",theme); appliquerTheme();
+};
 appliquerTheme();
 
-/* ============================================================
-   EXERCICE 1 — DICTÉE
-   ============================================================ */
-var DICTEES = {
-  CE1: [
-    {t:"Le petit chat noir dort sur le tapis rouge.", a:"« petit », « noir » et « rouge » s'accordent avec « chat » : masculin singulier, donc pas de s."},
-    {t:"Mes parents achètent des fruits au marché.", a:"« achètent » : le sujet « mes parents » est pluriel, le verbe prend -ent."},
-    {t:"Nous jouons dans la cour de l'école.", a:"Avec « nous », le verbe se termine toujours par -ons."},
-    {t:"La maîtresse écrit la date au tableau.", a:"« maîtresse » garde son accent circonflexe sur le i."},
-    {t:"Les oiseaux chantent dans le grand jardin.", a:"« oiseaux » : les mots en -eau font leur pluriel en -eaux."},
-    {t:"Papa prépare une soupe de légumes pour ce soir.", a:"« légumes » prend un accent aigu sur le premier e."}
-  ],
-  CE2: [
-    {t:"Chaque matin, les élèves rangent leurs cartables dans le couloir.", a:"« leurs cartables » : chacun a le sien, donc pluriel — et « leurs » prend un s devant un nom pluriel."},
-    {t:"Le vent souffle si fort que les volets claquent.", a:"Deux sujets, deux verbes : « souffle » (le vent, singulier) et « claquent » (les volets, pluriel)."},
-    {t:"Ma sœur prépare une tarte aux pommes pour le goûter.", a:"« sœur » s'écrit avec le e dans l'o, et « goûter » garde son accent circonflexe."},
-    {t:"Les enfants ramassent des feuilles jaunes et rouges.", a:"Les deux adjectifs de couleur s'accordent avec « feuilles » : jaunes, rouges."},
-    {t:"Il ne faut pas oublier de fermer la porte du poulailler.", a:"La négation est en deux morceaux : ne… pas. On n'oublie pas le « ne »."},
-    {t:"Nous avons cueilli des cerises dans le verger de mon grand-père.", a:"« cueilli » : après le c, on écrit ue et non eu."}
-  ],
-  CM1: [
-    {t:"Pendant les vacances, nous avons visité un château entouré de douves.", a:"« entouré » s'accorde avec « château » : masculin singulier, donc pas de s."},
-    {t:"Les pompiers sont arrivés rapidement pour éteindre l'incendie.", a:"Avec l'auxiliaire être, le participe s'accorde avec le sujet : arrivés."},
-    {t:"Elle a rangé ses affaires avant de partir à la piscine.", a:"Avec avoir et sans COD placé avant, le participe ne bouge pas : « rangé »."},
-    {t:"Ce matin-là, un épais brouillard recouvrait toute la vallée.", a:"« matin-là » prend un trait d'union, et « recouvrait » est à l'imparfait."},
-    {t:"Les élèves que le directeur a félicités sont très fiers.", a:"Le COD « que » (mis pour les élèves) est placé avant : « félicités » prend un s."},
-    {t:"Quand il aperçut la mer, il poussa un cri de joie.", a:"« aperçut » prend une cédille sous le c pour garder le son [s]."}
-  ],
-  CM2: [
-    {t:"Malgré la pluie, les randonneurs ont poursuivi leur ascension jusqu'au refuge.", a:"« leur » devant « ascension » (singulier) ne prend pas de s."},
-    {t:"Les lettres qu'il nous a envoyées racontent son voyage en Amérique du Sud.", a:"Le COD « qu' » (les lettres) est avant l'auxiliaire avoir : « envoyées », féminin pluriel."},
-    {t:"Aussitôt qu'elle eut terminé son exercice, elle leva la main.", a:"« Aussitôt » en un mot ; « eut terminé » est un passé antérieur, sans accent sur eut."},
-    {t:"Nous nous sommes aperçus que le train partait avec quarante minutes de retard.", a:"Verbe pronominal avec être : « aperçus » s'accorde avec « nous ». Et « quarante » est invariable."},
-    {t:"Ces vieilles photographies, je les ai retrouvées au fond d'un tiroir.", a:"« les » reprend « photographies » et se trouve avant le verbe : « retrouvées »."},
-    {t:"Quels que soient les obstacles, ils continueront à s'entraîner chaque semaine.", a:"« Quels que soient » s'écrit en trois mots et s'accorde avec « les obstacles »."}
-  ]
-};
-
-var dictee = {
-  niveau: Memoire.lire("niveau","CE2"),
-  serie: [], index: 0, ecoutes: 0, montree: false, releve: [], corrigee: false
-};
-if(!DICTEES[dictee.niveau]) dictee.niveau = "CE2";
-
-/* --- Synthèse vocale --- */
-var voixDispo = [], voixChoisie = null, tts = ("speechSynthesis" in window);
-
+/* =========================================================
+   Synthèse vocale (iOS : la première lecture doit suivre un appui)
+   ========================================================= */
+var tts=("speechSynthesis" in window), voixFr=null, voixPrete=false;
 function chargerVoix(){
   if(!tts) return;
-  var toutes = window.speechSynthesis.getVoices() || [];
-  voixDispo = toutes.filter(function(v){ return /^fr/i.test(v.lang); });
-  var select = $("voix");
-  select.innerHTML = "";
-  if(!voixDispo.length){
-    var opt = document.createElement("option");
-    opt.textContent = "Aucune voix française";
-    select.appendChild(opt); select.disabled = true;
-    avertirVoix("Aucune voix française n'est installée sur cet ordinateur. Tu peux quand même faire l'exercice en cliquant sur « Montrer la phrase », puis en la recopiant de mémoire.");
-    return;
-  }
-  select.disabled = false;
-  voixDispo.forEach(function(v,i){
-    var opt = document.createElement("option");
-    opt.value = i; opt.textContent = v.name + " (" + v.lang + ")";
-    select.appendChild(opt);
-  });
-  var memo = Memoire.lire("voix", null);
-  var trouvee = memo===null ? -1 : voixDispo.findIndex(function(v){ return v.name===memo; });
-  var idx = trouvee >= 0 ? trouvee : 0;
-  select.value = String(idx); voixChoisie = voixDispo[idx];
-  avertirVoix(null);
+  var toutes=[];
+  try{ toutes=window.speechSynthesis.getVoices()||[]; }catch(e){ toutes=[]; }
+  var fr=[],i;
+  for(i=0;i<toutes.length;i++) if(/^fr/i.test(toutes[i].lang)) fr.push(toutes[i]);
+  voixFr = fr.length ? fr[0] : null;
+  voixPrete = toutes.length>0;
+  if(voixPrete && !voixFr) prevenirVoix("Aucune voix française n'est installée sur cet iPad. Le bouton « 👁 Montrer » affiche le mot : on peut le lire, le cacher, puis l'écrire de mémoire.");
+  else prevenirVoix(null);
 }
-function avertirVoix(message){
-  var boite = $("alerte-voix");
-  if(!message){ boite.hidden = true; return; }
-  boite.hidden = false; boite.textContent = message;
+function prevenirVoix(msg){
+  var b=$("alerte-voix");
+  if(!msg){ b.hidden=true; return; }
+  vider(b); b.appendChild(document.createTextNode(msg)); b.hidden=false;
 }
 if(tts){
   chargerVoix();
-  window.speechSynthesis.addEventListener("voiceschanged", chargerVoix);
+  if(typeof window.speechSynthesis.addEventListener==="function")
+    window.speechSynthesis.addEventListener("voiceschanged",chargerVoix);
+  else window.speechSynthesis.onvoiceschanged=chargerVoix;
 }else{
-  $("voix").disabled = true;
-  avertirVoix("Ce navigateur ne sait pas lire les phrases à voix haute. Utilise « Montrer la phrase » : la dictée devient un exercice de copie, la correction fonctionne pareil.");
+  prevenirVoix("Ce navigateur ne sait pas lire les mots à voix haute. Le bouton « 👁 Montrer » affiche le mot : on le lit, on le cache, puis on l'écrit.");
 }
-$("voix").addEventListener("change", function(){
-  voixChoisie = voixDispo[Number(this.value)] || null;
-  if(voixChoisie) Memoire.ecrire("voix", voixChoisie.name);
-});
-
-function lire(vitesse){
-  if(!tts || !DICTEES[dictee.niveau]) return;
-  var phrase = dictee.serie[dictee.index];
-  if(!phrase) return;
-  window.speechSynthesis.cancel();
-  var u = new SpeechSynthesisUtterance(phrase.t);
-  u.lang = "fr-FR"; u.rate = vitesse; u.pitch = 1;
-  if(voixChoisie) u.voice = voixChoisie;
-  window.speechSynthesis.speak(u);
-  dictee.ecoutes++;
-  $("nb-ecoutes").textContent = dictee.ecoutes + (dictee.ecoutes > 1 ? " écoutes" : " écoute");
+function arreterVoix(){ if(tts){ try{ window.speechSynthesis.cancel(); }catch(e){} } }
+function dire(texte,vitesse){
+  if(!tts) return;
+  try{
+    window.speechSynthesis.cancel();
+    var u=new SpeechSynthesisUtterance(texte);
+    u.lang="fr-FR"; u.rate=vitesse; u.pitch=1;
+    if(voixFr) u.voice=voixFr;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
 }
 
-/* --- Comparaison mot à mot (plus longue sous-suite commune) --- */
-function motsDe(texte){
-  return texte.replace(/[\u2019\u2018\u02BC]/g,"'")
-    .replace(/[\u00A0\u202F]/g," ")
-    .trim().replace(/\s+/g," ").split(" ").filter(Boolean);
+/* =========================================================
+   Comparaison lettre par lettre
+   ========================================================= */
+function normaliser(s){
+  return String(s)
+    .replace(/[’‘ʼ]/g,"'")
+    .replace(/[  ]/g," ")
+    .toLowerCase().trim().replace(/\s+/g," ");
 }
-function comparer(attendus, saisis){
-  var n = attendus.length, m = saisis.length, i, j;
-  var dp = [];
-  for(i=0;i<=n;i++) dp.push(new Int32Array(m+1));
-  for(i=n-1;i>=0;i--){
-    for(j=m-1;j>=0;j--){
-      dp[i][j] = attendus[i]===saisis[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j], dp[i][j+1]);
+function diffLettres(attendu,saisi){
+  var a=normaliser(attendu).split(""), b=normaliser(saisi).split("");
+  var origA=attendu.split(""), origB=saisi.split("");
+  var n=a.length,m=b.length,i,j;
+  var dp=[]; for(i=0;i<=n;i++) dp.push(new Int32Array(m+1));
+  for(i=n-1;i>=0;i--) for(j=m-1;j>=0;j--)
+    dp[i][j] = (a[i]===b[j]) ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j],dp[i][j+1]);
+  var ops=[]; i=0; j=0;
+  while(i<n&&j<m){
+    if(a[i]===b[j]){ ops.push({t:"ok",ca:origA[i],cs:origB[j]}); i++; j++; }
+    else if(dp[i+1][j]>=dp[i][j+1]){ ops.push({t:"man",ca:origA[i]}); i++; }
+    else { ops.push({t:"sup",cs:origB[j]}); j++; }
+  }
+  while(i<n){ ops.push({t:"man",ca:origA[i]}); i++; }
+  while(j<m){ ops.push({t:"sup",cs:origB[j]}); j++; }
+  return ops;
+}
+function ligneDiff(intitule,ops,cote){
+  var p=creer("p","ligne-diff",intitule);
+  var b=creer("b");
+  var k,o,sp;
+  for(k=0;k<ops.length;k++){
+    o=ops[k];
+    if(cote==="saisi"){
+      if(o.t==="ok") b.appendChild(document.createTextNode(o.cs));
+      else if(o.t==="sup"){ sp=creer("span","sup",o.cs); b.appendChild(sp); }
+    }else{
+      if(o.t==="ok") b.appendChild(document.createTextNode(o.ca));
+      else if(o.t==="man"){ sp=creer("span","man",o.ca); b.appendChild(sp); }
     }
   }
-  var brut = []; i=0; j=0;
-  while(i<n && j<m){
-    if(attendus[i]===saisis[j]){ brut.push({t:"ok", mot:saisis[j]}); i++; j++; }
-    else if(dp[i+1][j] >= dp[i][j+1]){ brut.push({t:"man", attendu:attendus[i]}); i++; }
-    else { brut.push({t:"sup", mot:saisis[j]}); j++; }
-  }
-  while(i<n){ brut.push({t:"man", attendu:attendus[i]}); i++; }
-  while(j<m){ brut.push({t:"sup", mot:saisis[j]}); j++; }
-
-  /* un mot manquant suivi (ou précédé) d'un mot en trop = une faute d'orthographe */
-  var fusion = [];
-  for(var k=0;k<brut.length;k++){
-    var a = brut[k], b = brut[k+1];
-    if(b && ((a.t==="man" && b.t==="sup") || (a.t==="sup" && b.t==="man"))){
-      fusion.push({ t:"faux",
-        mot: a.t==="sup" ? a.mot : b.mot,
-        attendu: a.t==="man" ? a.attendu : b.attendu });
-      k++;
-    } else fusion.push(a);
-  }
-  return fusion;
+  if(!b.firstChild) b.appendChild(creer("span","vide","(rien)"));
+  p.appendChild(b);
+  return p;
 }
 
-function nouvelleSerie(){
-  dictee.serie = melanger(DICTEES[dictee.niveau].slice()).slice(0,5);
-  dictee.index = 0; dictee.releve = [];
-  $("releve-dictee").hidden = true;
-  $("liste-releve").innerHTML = "";
-  afficherPhrase();
+/* =========================================================
+   File d'attente commune : un item raté revient plus loin
+   ========================================================= */
+function File(items){
+  this.file=melanger(items.slice());
+  this.total=items.length;
+  this.reussis=0;
+  this.rates={};      /* clé -> nombre d'erreurs */
+  this.nbErreurs=0;
+  this.debut=(new Date()).getTime();
 }
-function afficherPhrase(){
-  dictee.ecoutes = 0; dictee.montree = false; dictee.corrigee = false;
-  $("nb-ecoutes").textContent = "0 écoute";
-  $("copie").value = ""; $("copie").disabled = false;
-  $("correction").hidden = true; $("correction").innerHTML = "";
-  $("phrase-visible").hidden = true;
-  $("titre-dictee").textContent = "Phrase " + (dictee.index+1);
-  $("compteur-dictee").textContent = (dictee.index+1) + " / " + dictee.serie.length + " · niveau " + dictee.niveau;
-  $("corriger").disabled = false;
-  $("suivante").disabled = true;
-  $("suivante").textContent = dictee.index === dictee.serie.length-1 ? "Terminer la série" : "Phrase suivante";
-}
-
-function corriger(){
-  if(dictee.corrigee) return;
-  var phrase = dictee.serie[dictee.index];
-  var attendus = motsDe(phrase.t);
-  var saisis = motsDe($("copie").value);
-  if(!saisis.length){
-    $("copie").focus();
-    return;
-  }
-  dictee.corrigee = true;
-  var ops = comparer(attendus, saisis);
-  var justes = ops.filter(function(o){ return o.t==="ok"; }).length;
-  var note = Math.round(justes / attendus.length * 20 * 10) / 10;
-
-  var mention = note >= 19 ? "Sans faute ou presque — bravo."
-    : note >= 16 ? "Très bien, il reste peu de choses à revoir."
-    : note >= 12 ? "C'est en bonne voie : regarde les mots en rouge."
-    : "Relis l'astuce, puis réécoute la phrase mot à mot.";
-  if(dictee.montree) mention += " (phrase affichée)";
-
-  var html = '<div class="verdict"><span class="note-sur">' + note.toString().replace(".",",") + ' / 20</span>'
-    + '<span class="mention">' + justes + " mot" + (justes>1?"s":"") + " juste" + (justes>1?"s":"") + " sur " + attendus.length + " — " + mention + "</span></div>";
-
-  html += '<div class="copie-corrigee">';
-  ops.forEach(function(o){
-    if(o.t==="ok") html += '<span class="mot">' + echapper(o.mot) + "</span>";
-    else if(o.t==="faux") html += '<span class="mot faux"><span class="attendu">' + echapper(o.attendu) + '</span><span class="saisi">' + echapper(o.mot) + "</span></span>";
-    else if(o.t==="man") html += '<span class="mot man">' + echapper(o.attendu) + "</span>";
-    else html += '<span class="mot sup"><span class="attendu">en trop</span><span class="saisi">' + echapper(o.mot) + "</span></span>";
-  });
-  html += "</div>";
-
-  html += '<p class="phrase-modele">' + echapper(phrase.t) + "</p>";
-  html += '<div class="astuce"><b>L’astuce du maître</b>' + echapper(phrase.a) + "</div>";
-
-  $("correction").innerHTML = html;
-  $("correction").hidden = false;
-  $("copie").disabled = true;
-  $("corriger").disabled = true;
-  $("suivante").disabled = false;
-  $("suivante").focus();
-
-  dictee.releve.push({ note: note, ecoutes: dictee.ecoutes, montree: dictee.montree, phrase: phrase.t });
-}
-function echapper(s){
-  return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
-}
-
-function phraseSuivante(){
-  if(dictee.index < dictee.serie.length-1){ dictee.index++; afficherPhrase(); $("copie").focus(); }
-  else terminerSerie();
-}
-function terminerSerie(){
-  var total = dictee.releve.reduce(function(s,r){ return s+r.note; },0);
-  var moyenne = Math.round(total / dictee.releve.length * 10) / 10;
-  var liste = $("liste-releve");
-  liste.innerHTML = "";
-  dictee.releve.forEach(function(r){
-    var li = document.createElement("li");
-    li.innerHTML = "<b>" + r.note.toString().replace(".",",") + "/20</b> — " + echapper(r.phrase)
-      + " <span style=\"color:var(--ink-faint)\">(" + r.ecoutes + " écoute" + (r.ecoutes>1?"s":"") + (r.montree?", affichée":"") + ")</span>";
-    liste.appendChild(li);
-  });
-  var conclusion = document.createElement("li");
-  conclusion.style.listStyle = "none";
-  conclusion.style.marginLeft = "-1.4em";
-  conclusion.style.marginTop = "10px";
-  conclusion.innerHTML = "<b>Moyenne de la série : " + moyenne.toString().replace(".",",") + "/20</b>";
-  liste.appendChild(conclusion);
-  $("releve-dictee").hidden = false;
-  $("suivante").disabled = true;
-  $("releve-dictee").scrollIntoView({behavior:"smooth", block:"nearest"});
-}
-
-/* Niveaux */
-var boitierNiveaux = $("niveaux");
-Object.keys(DICTEES).forEach(function(niv){
-  var b = document.createElement("button");
-  b.className = "puce" + (niv===dictee.niveau ? " actif" : "");
-  b.type = "button"; b.textContent = niv;
-  b.addEventListener("click", function(){
-    dictee.niveau = niv; Memoire.ecrire("niveau", niv);
-    Array.prototype.forEach.call(boitierNiveaux.children, function(c){ c.classList.toggle("actif", c===b); });
-    nouvelleSerie();
-  });
-  boitierNiveaux.appendChild(b);
-});
-
-/* Lettres accentuées */
-var LETTRES = ["é","è","ê","ë","à","â","ù","û","î","ï","ô","ç","œ","«","»","’"];
-LETTRES.forEach(function(c){
-  var b = document.createElement("button");
-  b.type = "button"; b.textContent = c; b.title = "Insérer " + c;
-  b.addEventListener("click", function(){
-    var z = $("copie");
-    if(z.disabled) return;
-    var d = z.selectionStart, f = z.selectionEnd;
-    z.value = z.value.slice(0,d) + c + z.value.slice(f);
-    z.selectionStart = z.selectionEnd = d + c.length;
-    z.focus();
-  });
-  $("accents").appendChild(b);
-});
-
-$("ecouter").addEventListener("click", function(){ lire(0.95); });
-$("ecouter-lent").addEventListener("click", function(){ lire(0.62); });
-$("montrer").addEventListener("click", function(){
-  var p = $("phrase-visible");
-  dictee.montree = true;
-  p.textContent = dictee.serie[dictee.index].t;
-  p.hidden = false;
-});
-$("corriger").addEventListener("click", corriger);
-$("suivante").addEventListener("click", phraseSuivante);
-$("recommencer-dictee").addEventListener("click", nouvelleSerie);
-$("copie").addEventListener("keydown", function(e){
-  if(e.key==="Enter" && (e.ctrlKey || e.metaKey)){ e.preventDefault(); corriger(); }
-});
-
-nouvelleSerie();
-
-/* ============================================================
-   EXERCICE 2 — TABLES DE MULTIPLICATION
-   ============================================================ */
-var tables = {
-  choisies: Memoire.lire("tables", [2,3,4,5]),
-  longueur: Memoire.lire("longueur", 20),
-  max: Memoire.lire("maxfacteur", 10),
-  questions: [], index: 0, score: 0, serie: 0, meilleureSerie: 0,
-  erreurs: [], debut: 0, chrono: null, enCours: false, bloque: false
+File.prototype.courant=function(){ return this.file[0]; };
+File.prototype.juste=function(){
+  this.file.shift();
+  this.reussis++;
+  return this.file.length===0;
 };
-if(!Array.isArray(tables.choisies) || !tables.choisies.length) tables.choisies = [2,3,4,5];
+File.prototype.faux=function(cle){
+  var item=this.file.shift();
+  this.nbErreurs++;
+  this.rates[cle]=(this.rates[cle]||0)+1;
+  var pos=Math.min(3,this.file.length);
+  this.file.splice(pos,0,item);
+  return false;
+};
+File.prototype.restants=function(){ return this.file.length; };
+File.prototype.secondes=function(){
+  return Math.round(((new Date()).getTime()-this.debut)/1000);
+};
+function duree(s){
+  var m=Math.floor(s/60), r=s%60;
+  return m ? (m+" min "+(r<10?"0":"")+r+" s") : (r+" s");
+}
 
-function cleRecord(){
-  return "record." + tables.choisies.slice().sort(function(a,b){return a-b;}).join("-") + "x" + tables.max + "." + tables.longueur;
-}
-function afficherRecord(){
-  var r = Memoire.lire(cleRecord(), null);
-  $("m-record").textContent = r ? (r.score + "/" + tables.longueur + " · " + r.temps + " s") : "—";
-}
+/* =========================================================
+   EXERCICE 1 — LES MOTS
+   ========================================================= */
+var categoriesActives=Memoire.lire("categories",CATEGORIES.slice());
+if(!categoriesActives || !categoriesActives.length) categoriesActives=CATEGORIES.slice();
+var fileMots=null, motCorrige=false;
 
-/* Sélecteurs */
-function construirePuces(conteneur, valeurs, estActif, auClic, etiquette){
-  conteneur.innerHTML = "";
-  valeurs.forEach(function(v){
-    var b = document.createElement("button");
-    b.type = "button"; b.className = "puce";
-    b.textContent = etiquette ? etiquette(v) : String(v);
-    b.setAttribute("aria-pressed", estActif(v) ? "true" : "false");
-    b.addEventListener("click", function(){ auClic(v); });
-    conteneur.appendChild(b);
-  });
+function motsChoisis(){
+  var r=[],i;
+  for(i=0;i<MOTS.length;i++) if(categoriesActives.indexOf(MOTS[i].c)>=0) r.push(MOTS[i]);
+  return r;
 }
-function rafraichirTables(){
-  construirePuces($("choix-tables"), [1,2,3,4,5,6,7,8,9,10,11,12],
-    function(v){ return tables.choisies.indexOf(v) >= 0; },
-    function(v){
-      var i = tables.choisies.indexOf(v);
-      if(i>=0){ if(tables.choisies.length>1) tables.choisies.splice(i,1); }
-      else tables.choisies.push(v);
-      Memoire.ecrire("tables", tables.choisies);
-      rafraichirTables(); afficherRecord(); dessinerPythagore();
-    });
-  construirePuces($("choix-longueur"), [10,20,30],
-    function(v){ return tables.longueur===v; },
-    function(v){ tables.longueur=v; Memoire.ecrire("longueur",v); rafraichirTables(); afficherRecord(); },
-    function(v){ return v + " calculs"; });
-  construirePuces($("choix-max"), [10,12],
-    function(v){ return tables.max===v; },
-    function(v){ tables.max=v; Memoire.ecrire("maxfacteur",v); rafraichirTables(); afficherRecord(); dessinerPythagore(); },
-    function(v){ return "jusqu’à " + v; });
-}
-rafraichirTables();
-afficherRecord();
-
-function fabriquerQuestions(){
-  var vivier = [];
-  tables.choisies.forEach(function(t){
-    for(var f=1; f<=tables.max; f++) vivier.push({a:t, b:f});
-  });
-  melanger(vivier);
-  var liste = [];
-  while(liste.length < tables.longueur){
-    liste = liste.concat(vivier.slice(0, Math.min(vivier.length, tables.longueur - liste.length)));
-    if(liste.length < tables.longueur) melanger(vivier);
+function construireCategories(){
+  var z=$("puces-categories"); vider(z);
+  var tout=creer("button","puce"+(categoriesActives.length===CATEGORIES.length?" actif":""),"Tout");
+  tout.type="button";
+  tout.onclick=function(){ categoriesActives=CATEGORIES.slice(); Memoire.ecrire("categories",categoriesActives); construireCategories(); demarrerMots(); };
+  z.appendChild(tout);
+  for(var i=0;i<CATEGORIES.length;i++){
+    (function(cat){
+      var nb=0,k;
+      for(k=0;k<MOTS.length;k++) if(MOTS[k].c===cat) nb++;
+      var b=creer("button","puce"+(categoriesActives.indexOf(cat)>=0?" actif":""),cat+" ("+nb+")");
+      b.type="button";
+      b.onclick=function(){
+        var p=categoriesActives.indexOf(cat);
+        if(p>=0){ if(categoriesActives.length>1) categoriesActives.splice(p,1); }
+        else categoriesActives.push(cat);
+        Memoire.ecrire("categories",categoriesActives);
+        construireCategories(); demarrerMots();
+      };
+      z.appendChild(b);
+    })(CATEGORIES[i]);
   }
-  return liste;
 }
+function demarrerMots(){
+  var liste=motsChoisis();
+  fileMots=new File(liste);
+  $("bilan-mots").hidden=true;
+  $("carte-mots").hidden=false;
+  $("puces-categories").parentNode.hidden=false;
+  afficherMot(false);
+}
+function afficherMot(lire){
+  motCorrige=false;
+  var m=fileMots.courant();
+  $("carte-mots").className="carte";
+  $("aide-mot").hidden=true; vider($("aide-mot"));
+  $("verdict-mot").hidden=true; vider($("verdict-mot"));
+  $("saisie-mot").value=""; $("saisie-mot").disabled=false;
+  var v=$("verifier-mot"); vider(v); v.appendChild(document.createTextNode("Vérifier"));
+  majJaugeMots();
+  if(lire) dire(m.m,0.85);
+  try{ $("saisie-mot").focus(); }catch(e){}
+}
+function majJaugeMots(){
+  var t=fileMots.total;
+  $("compte-mots").firstChild.nodeValue=fileMots.reussis+" / "+t+" réussis";
+  $("jauge-mots").style.width=(fileMots.reussis/t*100)+"%";
+}
+function verifierMot(){
+  if(motCorrige){ suivantMot(); return; }
+  var saisi=$("saisie-mot").value;
+  if(!normaliser(saisi)){ try{ $("saisie-mot").focus(); }catch(e){} return; }
+  motCorrige=true;
+  arreterVoix();
+  var m=fileMots.courant();
+  var ok=(normaliser(saisi)===normaliser(m.m));
+  var z=$("verdict-mot"); vider(z); z.hidden=false;
+  $("saisie-mot").disabled=true;
 
-function demarrer(questions){
-  tables.questions = questions || fabriquerQuestions();
-  tables.index = 0; tables.score = 0; tables.serie = 0; tables.meilleureSerie = 0;
-  tables.erreurs = []; tables.enCours = true; tables.bloque = false;
-  tables.debut = Date.now();
-  $("bilan").hidden = true;
-  $("zone-jeu").hidden = false;
-  $("demarrer").hidden = true;
-  $("arreter").hidden = false;
-  $("reponse").disabled = false;
-  clearInterval(tables.chrono);
-  tables.chrono = setInterval(function(){
-    $("m-temps").textContent = Math.round((Date.now()-tables.debut)/1000) + " s";
-  }, 250);
-  poserQuestion();
-}
-function poserQuestion(){
-  var q = tables.questions[tables.index];
-  $("calcul").innerHTML = q.a + ' <span class="signe">×</span> ' + q.b;
-  $("reponse").value = ""; $("reponse").disabled = false; $("reponse").focus();
-  $("retour").textContent = ""; $("retour").className = "retour";
-  $("ardoise").className = "ardoise";
-  $("barre").style.width = (tables.index / tables.questions.length * 100) + "%";
-  $("m-score").textContent = tables.score;
-  $("m-serie").textContent = tables.serie;
-  tables.bloque = false;
-}
-function valider(){
-  if(!tables.enCours || tables.bloque) return;
-  var saisie = $("reponse").value.trim();
-  if(!/^\d+$/.test(saisie)) return;
-  tables.bloque = true;
-  var q = tables.questions[tables.index];
-  var attendu = q.a * q.b;
-  var juste = Number(saisie) === attendu;
-
-  if(juste){
-    tables.score++; tables.serie++;
-    if(tables.serie > tables.meilleureSerie) tables.meilleureSerie = tables.serie;
-    $("ardoise").className = "ardoise juste";
-    $("retour").className = "retour juste";
-    $("retour").textContent = "Juste !";
+  var fini=false;
+  if(ok){
+    $("carte-mots").className="carte juste";
+    z.appendChild(creer("p","titre ok","Bravo, c'est juste ! 🎉"));
+    fini=fileMots.juste();
   }else{
-    tables.serie = 0;
-    tables.erreurs.push({a:q.a, b:q.b, donnee:saisie, attendu:attendu});
-    $("ardoise").className = "ardoise faux";
-    $("retour").className = "retour faux";
-    $("retour").textContent = q.a + " × " + q.b + " = " + attendu;
+    $("carte-mots").className="carte faux";
+    z.appendChild(creer("p","titre ko","Presque… ce mot reviendra."));
+    var ops=diffLettres(m.m,saisi);
+    z.appendChild(ligneDiff("Tu as écrit :",ops,"saisi"));
+    z.appendChild(ligneDiff("Il fallait écrire :",ops,"attendu"));
+    var syl=creer("p","ligne-diff","En syllabes :");
+    var bs=creer("b",null,m.s); bs.style.color="var(--vert)";
+    syl.appendChild(bs); z.appendChild(syl);
+    fileMots.faux(m.m);
   }
-  $("m-score").textContent = tables.score;
-  $("m-serie").textContent = tables.serie;
-  $("reponse").disabled = true;
-  $("barre").style.width = ((tables.index+1) / tables.questions.length * 100) + "%";
-
-  setTimeout(function(){
-    if(!tables.enCours) return;
-    tables.index++;
-    if(tables.index >= tables.questions.length) terminer();
-    else poserQuestion();
-  }, juste ? 450 : 1500);
+  majJaugeMots();
+  if(fini){ terminerMots(); return; }
+  var v=$("verifier-mot"); vider(v);
+  v.appendChild(document.createTextNode(ok?"Mot suivant ›":"Je réessaie plus tard ›"));
+  try{ v.focus(); }catch(e){}
 }
-function terminer(){
-  tables.enCours = false;
-  clearInterval(tables.chrono);
-  var temps = Math.round((Date.now()-tables.debut)/1000);
-  var total = tables.questions.length;
-  $("zone-jeu").hidden = true;
-  $("demarrer").hidden = false;
-  $("arreter").hidden = true;
+function suivantMot(){ afficherMot(true); }
+function terminerMots(){
+  $("carte-mots").hidden=true;
+  $("puces-categories").parentNode.hidden=true;
+  var b=$("bilan-mots"); vider(b); b.hidden=false;
+  b.appendChild(creer("div","medaille","🏆"));
+  b.appendChild(creer("h2",null,"Tous les mots sont justes !"));
+  b.appendChild(creer("p",null,(prenom?prenom+", tu":"Tu")+" as écrit sans faute les "+fileMots.total+" mots de la fiche."));
+  var ch=creer("div","chiffres");
+  var d1=creer("div"); d1.appendChild(creer("b",null,String(fileMots.total))); d1.appendChild(creer("span",null,"mots")); ch.appendChild(d1);
+  var d2=creer("div"); d2.appendChild(creer("b",null,String(fileMots.nbErreurs))); d2.appendChild(creer("span",null,"erreurs")); ch.appendChild(d2);
+  var d3=creer("div"); d3.appendChild(creer("b",null,duree(fileMots.secondes()))); d3.appendChild(creer("span",null,"durée")); ch.appendChild(d3);
+  b.appendChild(ch);
+  var durs=[],k;
+  for(k in fileMots.rates) if(fileMots.rates.hasOwnProperty(k)) durs.push(k);
+  Memoire.ecrire("motsDifficiles",durs);
+  Memoire.ecrire("dernierMots",{date:(new Date()).toISOString().slice(0,10),erreurs:fileMots.nbErreurs,secondes:fileMots.secondes()});
+  if(durs.length){
+    b.appendChild(creer("p",null,"Les mots qui ont demandé plusieurs essais :"));
+    var lm=creer("div","liste-mots");
+    for(k=0;k<durs.length;k++) lm.appendChild(creer("span",null,durs[k]));
+    b.appendChild(lm);
+  }
+  var r=creer("div","rangee"); r.style.justifyContent="center";
+  var b1=creer("button","btn","Recommencer"); b1.type="button";
+  b1.onclick=function(){ $("carte-mots").hidden=false; demarrerMots(); };
+  var b2=creer("button","btn secondaire","‹ Accueil"); b2.type="button";
+  b2.onclick=function(){ montrer("ecran-accueil"); rafraichirAccueil(); };
+  r.appendChild(b1); r.appendChild(b2); b.appendChild(r);
+}
 
-  var record = Memoire.lire(cleRecord(), null);
-  var nouveau = !record || tables.score > record.score || (tables.score === record.score && temps < record.temps);
-  if(nouveau) Memoire.ecrire(cleRecord(), {score:tables.score, temps:temps});
-  afficherRecord();
+$("ecouter").onclick=function(){ dire(fileMots.courant().m,0.85); };
+$("ecouter-lent").onclick=function(){ dire(fileMots.courant().m,0.5); };
+$("syllabes").onclick=function(){
+  var a=$("aide-mot"); vider(a); a.hidden=false;
+  a.appendChild(creer("div","syllabes",fileMots.courant().s));
+  a.appendChild(creer("small",null,"Le petit mot devant (un, une, le) n'est pas découpé."));
+};
+(function(){
+  var reveler=function(){
+    var a=$("aide-mot"); vider(a); a.hidden=false;
+    a.appendChild(creer("div","motentier",fileMots.courant().m));
+    a.appendChild(creer("small",null,"Lis-le, puis appuie encore sur 👁 pour le cacher."));
+    $("montrer").onclick=cacher;
+  };
+  var cacher=function(){ $("aide-mot").hidden=true; $("montrer").onclick=reveler; };
+  $("montrer").onclick=reveler;
+})();
+function garderVisible(bouton){
+  window.setTimeout(function(){
+    try{ bouton.scrollIntoView(false); }catch(e){}
+  },350);
+}
+$("saisie-mot").onfocus=function(){ garderVisible($("verifier-mot")); };
+$("saisie-calcul").onfocus=function(){ garderVisible($("verifier-calcul")); };
+$("verifier-mot").onclick=verifierMot;
+$("saisie-mot").onkeydown=function(e){ if(e.key==="Enter"||e.keyCode===13){ e.preventDefault(); verifierMot(); } };
 
-  var pourcent = Math.round(tables.score/total*100);
-  var mot = pourcent===100 ? "Série parfaite." : pourcent>=85 ? "Très solide."
-    : pourcent>=60 ? "Ça vient — les calculs ratés sont listés ci-dessous."
-    : "Reprends d'abord une seule table à la fois.";
+/* Lettres accentuées : sur iPad elles demandent un appui long, ici un seul appui. */
+(function(){
+  var lettres=["é","è","ê","à","â","î","ô","û","ç","ï"];
+  var z=$("clavier-accents");
+  for(var i=0;i<lettres.length;i++){
+    (function(c){
+      var b=creer("button",null,c); b.type="button";
+      b.onclick=function(){
+        var z2=$("saisie-mot");
+        if(z2.disabled) return;
+        var d=z2.selectionStart, f=z2.selectionEnd;
+        if(typeof d!=="number"){ z2.value+=c; }
+        else{
+          z2.value=z2.value.slice(0,d)+c+z2.value.slice(f);
+          try{ z2.selectionStart=z2.selectionEnd=d+c.length; }catch(e){}
+        }
+        try{ z2.focus(); }catch(e){}
+      };
+      z.appendChild(b);
+    })(lettres[i]);
+  }
+})();
 
-  var html = "<h3>" + mot + "</h3>"
-    + '<p style="margin:2px 0 0;color:var(--ink-soft);font-size:14px">'
-    + tables.choisies.slice().sort(function(a,b){return a-b;}).join(", ").replace(/,([^,]*)$/, " et$1")
-    + " · jusqu’à " + tables.max + "</p>"
-    + '<p class="score">' + tables.score + "<span style=\"font-size:22px;color:var(--ink-faint)\"> / " + total + "</span></p>"
-    + '<p style="margin:0;color:var(--ink-soft);font-size:14px;font-variant-numeric:tabular-nums">'
-    + temps + " s au total · " + (Math.round(temps/total*10)/10).toString().replace(".",",") + " s par calcul · meilleure série : "
-    + tables.meilleureSerie + (nouveau ? " · <b style=\"color:var(--vert)\">nouveau record</b>" : "") + "</p>";
+/* =========================================================
+   EXERCICE 2 — LES TABLES
+   ========================================================= */
+var tablesActives=Memoire.lire("tables",[2,3,4,5,6,7,8,9]);
+if(!tablesActives || !tablesActives.length) tablesActives=[2,3,4,5,6,7,8,9];
+var fileCalculs=null, calculCorrige=false;
 
-  if(tables.erreurs.length){
-    html += '<h4 style="margin:22px 0 0;font-size:12px;letter-spacing:.09em;text-transform:uppercase;color:var(--ink-faint)">À revoir</h4><div class="a-revoir">';
-    tables.erreurs.forEach(function(e){
-      html += "<span>" + e.a + " × " + e.b + " = " + e.attendu + "</span>";
-    });
-    html += "</div>";
+function construireTables(){
+  var z=$("puces-tables"); vider(z);
+  for(var t=2;t<=10;t++){
+    (function(n){
+      var b=creer("button","puce"+(tablesActives.indexOf(n)>=0?" actif":""),"× "+n);
+      b.type="button";
+      b.onclick=function(){
+        var p=tablesActives.indexOf(n);
+        if(p>=0){ if(tablesActives.length>1) tablesActives.splice(p,1); }
+        else tablesActives.push(n);
+        Memoire.ecrire("tables",tablesActives);
+        construireTables(); demarrerTables();
+      };
+      z.appendChild(b);
+    })(t);
+  }
+}
+function demarrerTables(){
+  var liste=[],i,f;
+  for(i=0;i<tablesActives.length;i++)
+    for(f=1;f<=10;f++) liste.push({a:tablesActives[i],b:f});
+  fileCalculs=new File(liste);
+  $("bilan-tables").hidden=true;
+  $("carte-tables").hidden=false;
+  $("puces-tables").parentNode.hidden=false;
+  afficherCalcul();
+}
+function afficherCalcul(){
+  calculCorrige=false;
+  var q=fileCalculs.courant();
+  $("carte-tables").className="carte";
+  vider($("calcul"));
+  $("calcul").appendChild(document.createTextNode(q.a+" "));
+  $("calcul").appendChild(creer("span","signe","×"));
+  $("calcul").appendChild(document.createTextNode(" "+q.b));
+  $("verdict-calcul").hidden=true; vider($("verdict-calcul"));
+  $("saisie-calcul").value=""; $("saisie-calcul").disabled=false;
+  var v=$("verifier-calcul"); vider(v); v.appendChild(document.createTextNode("Vérifier"));
+  majJaugeTables();
+  try{ $("saisie-calcul").focus(); }catch(e){}
+}
+function majJaugeTables(){
+  var t=fileCalculs.total;
+  $("compte-tables").firstChild.nodeValue=fileCalculs.reussis+" / "+t+" réussis";
+  $("jauge-tables").style.width=(fileCalculs.reussis/t*100)+"%";
+}
+function verifierCalcul(){
+  if(calculCorrige){ afficherCalcul(); return; }
+  var saisi=$("saisie-calcul").value.replace(/\s/g,"");
+  if(!/^[0-9]+$/.test(saisi)){ try{ $("saisie-calcul").focus(); }catch(e){} return; }
+  calculCorrige=true;
+  var q=fileCalculs.courant(), attendu=q.a*q.b;
+  var ok=(Number(saisi)===attendu);
+  var z=$("verdict-calcul"); vider(z); z.hidden=false;
+  $("saisie-calcul").disabled=true;
+  var fini=false;
+  if(ok){
+    $("carte-tables").className="carte juste";
+    z.appendChild(creer("p","titre ok","Juste ! 🎉"));
+    fini=fileCalculs.juste();
   }else{
-    html += '<p style="margin:20px 0 0;color:var(--vert);font-weight:600">Aucune erreur : rien à revoir.</p>';
+    $("carte-tables").className="carte faux";
+    z.appendChild(creer("p","titre ko",q.a+" × "+q.b+" = "+attendu));
+    z.appendChild(creer("p","ligne-diff","Ce calcul reviendra tout à l'heure."));
+    fileCalculs.faux(q.a+" × "+q.b);
   }
-
-  html += '<div class="barre-actions" style="margin-top:12px">'
-    + '<button class="btn" id="rejouer">Nouvelle série</button>'
-    + (tables.erreurs.length ? '<button class="btn rouge" id="rejouer-erreurs">Rejouer mes ' + tables.erreurs.length + ' erreur' + (tables.erreurs.length>1?"s":"") + "</button>" : "")
-    + "</div>";
-
-  $("bilan").innerHTML = html;
-  $("bilan").hidden = false;
-  $("rejouer").addEventListener("click", function(){ demarrer(); });
-  var bouton = $("rejouer-erreurs");
-  if(bouton){
-    var aRejouer = tables.erreurs.map(function(e){ return {a:e.a, b:e.b}; });
-    bouton.addEventListener("click", function(){
-      var liste = melanger(aRejouer.slice());
-      while(liste.length < 4) liste = liste.concat(aRejouer);
-      demarrer(liste);
-    });
-  }
-  $("bilan").scrollIntoView({behavior:"smooth", block:"nearest"});
+  majJaugeTables();
+  if(fini){ terminerTables(); return; }
+  var v=$("verifier-calcul"); vider(v);
+  v.appendChild(document.createTextNode(ok?"Calcul suivant ›":"Je réessaie plus tard ›"));
+  try{ v.focus(); }catch(e){}
 }
-
-$("demarrer").addEventListener("click", function(){ demarrer(); });
-$("arreter").addEventListener("click", function(){
-  tables.enCours = false; clearInterval(tables.chrono);
-  $("demarrer").hidden = false; $("arreter").hidden = true;
-  $("retour").textContent = "Série arrêtée."; $("retour").className = "retour";
-  $("ardoise").className = "ardoise"; $("reponse").disabled = true;
-});
-$("reponse").addEventListener("keydown", function(e){
-  if(e.key==="Enter"){ e.preventDefault(); valider(); }
-});
-$("reponse").disabled = true;
-
-/* Table de Pythagore */
-function dessinerPythagore(){
-  var n = tables.max;
-  var h = '<table class="pythagore"><thead><tr><th scope="col">×</th>';
-  for(var c=1;c<=n;c++) h += '<th scope="col">' + c + "</th>";
-  h += "</tr></thead><tbody>";
-  for(var l=1;l<=12;l++){
-    var vive = tables.choisies.indexOf(l) >= 0;
-    h += '<tr class="' + (vive?"vive":"") + '"><th scope="row">' + l + "</th>";
-    for(var k=1;k<=n;k++) h += "<td>" + (l*k) + "</td>";
-    h += "</tr>";
+function terminerTables(){
+  $("carte-tables").hidden=true;
+  $("puces-tables").parentNode.hidden=true;
+  var b=$("bilan-tables"); vider(b); b.hidden=false;
+  b.appendChild(creer("div","medaille","🥇"));
+  b.appendChild(creer("h2",null,"Toutes les tables sont justes !"));
+  b.appendChild(creer("p",null,fileCalculs.total+" calculs réussis sans qu'il n'en reste un seul faux."));
+  var ch=creer("div","chiffres");
+  var d1=creer("div"); d1.appendChild(creer("b",null,String(fileCalculs.total))); d1.appendChild(creer("span",null,"calculs")); ch.appendChild(d1);
+  var d2=creer("div"); d2.appendChild(creer("b",null,String(fileCalculs.nbErreurs))); d2.appendChild(creer("span",null,"erreurs")); ch.appendChild(d2);
+  var d3=creer("div"); d3.appendChild(creer("b",null,duree(fileCalculs.secondes()))); d3.appendChild(creer("span",null,"durée")); ch.appendChild(d3);
+  b.appendChild(ch);
+  var durs=[],k;
+  for(k in fileCalculs.rates) if(fileCalculs.rates.hasOwnProperty(k)) durs.push(k);
+  if(durs.length){
+    b.appendChild(creer("p",null,"Les calculs à revoir demain :"));
+    var lm=creer("div","liste-mots");
+    for(k=0;k<durs.length;k++) lm.appendChild(creer("span",null,durs[k]));
+    b.appendChild(lm);
   }
-  h += "</tbody></table>";
-  $("grille-pythagore").innerHTML = h;
+  var r=creer("div","rangee"); r.style.justifyContent="center";
+  var b1=creer("button","btn","Recommencer"); b1.type="button";
+  b1.onclick=function(){ $("carte-tables").hidden=false; demarrerTables(); };
+  var b2=creer("button","btn secondaire","‹ Accueil"); b2.type="button";
+  b2.onclick=function(){ montrer("ecran-accueil"); rafraichirAccueil(); };
+  r.appendChild(b1); r.appendChild(b2); b.appendChild(r);
 }
-dessinerPythagore();
+$("verifier-calcul").onclick=verifierCalcul;
+$("saisie-calcul").onkeydown=function(e){ if(e.key==="Enter"||e.keyCode===13){ e.preventDefault(); verifierCalcul(); } };
 
-/* Onglet mémorisé */
-ouvrirOnglet(Memoire.lire("onglet", 0) === 1 ? 1 : 0);
+/* =========================================================
+   EXERCICE 3 — et / est
+   ========================================================= */
+var fileEtEst=null, etestCorrige=false;
+function demarrerEtEst(){
+  fileEtEst=new File(ET_EST.slice());
+  $("bilan-etest").hidden=true;
+  $("carte-etest").hidden=false;
+  afficherEtEst();
+}
+function afficherEtEst(){
+  etestCorrige=false;
+  var q=fileEtEst.courant();
+  $("carte-etest").className="carte";
+  var p=$("phrase-etest"); vider(p);
+  p.appendChild(document.createTextNode(q.avant+" "));
+  p.appendChild(creer("span","trou","?"));
+  p.appendChild(document.createTextNode(" "+q.apres));
+  $("verdict-etest").hidden=true; vider($("verdict-etest"));
+  majJaugeEtEst();
+}
+function majJaugeEtEst(){
+  var t=fileEtEst.total;
+  $("compte-etest").firstChild.nodeValue=fileEtEst.reussis+" / "+t+" réussies";
+  $("jauge-etest").style.width=(fileEtEst.reussis/t*100)+"%";
+}
+function repondreEtEst(choix){
+  if(etestCorrige){ afficherEtEst(); return; }
+  etestCorrige=true;
+  var q=fileEtEst.courant(), ok=(choix===q.r);
+  var z=$("verdict-etest"); vider(z); z.hidden=false;
+  var p=$("phrase-etest"); vider(p);
+  p.appendChild(document.createTextNode(q.avant+" "));
+  var mot=creer("span","trou",q.r); p.appendChild(mot);
+  p.appendChild(document.createTextNode(" "+q.apres));
+  var fini=false;
+  if(ok){
+    $("carte-etest").className="carte juste";
+    z.appendChild(creer("p","titre ok","Bravo ! 🎉"));
+    fini=fileEtEst.juste();
+  }else{
+    $("carte-etest").className="carte faux";
+    z.appendChild(creer("p","titre ko","C'était « "+q.r+" »."));
+    z.appendChild(creer("p","ligne-diff", q.r==="est"
+      ? "On peut dire « "+q.avant+" était "+q.apres+" » : c'est le verbe être, donc est."
+      : "On peut dire « "+q.avant+" et puis "+q.apres+" » : c'est et."));
+    fileEtEst.faux(q.avant);
+  }
+  majJaugeEtEst();
+  if(fini){ terminerEtEst(); return; }
+  var b=creer("button","btn grand",ok?"Phrase suivante ›":"Je continue ›");
+  b.type="button"; b.onclick=afficherEtEst;
+  var r=creer("div","rangee"); r.style.marginTop="10px"; r.appendChild(b);
+  z.appendChild(r);
+  try{ b.focus(); }catch(e){}
+}
+function terminerEtEst(){
+  $("carte-etest").hidden=true;
+  var b=$("bilan-etest"); vider(b); b.hidden=false;
+  b.appendChild(creer("div","medaille","⭐️"));
+  b.appendChild(creer("h2",null,"et / est : c'est acquis !"));
+  b.appendChild(creer("p",null,"Les 8 phrases sont justes, avec "+fileEtEst.nbErreurs+" erreur"+(fileEtEst.nbErreurs>1?"s":"")+" en chemin."));
+  var r=creer("div","rangee"); r.style.justifyContent="center"; r.style.marginTop="16px";
+  var b1=creer("button","btn","Recommencer"); b1.type="button";
+  b1.onclick=function(){ $("carte-etest").hidden=false; demarrerEtEst(); };
+  var b2=creer("button","btn secondaire","‹ Accueil"); b2.type="button";
+  b2.onclick=function(){ montrer("ecran-accueil"); rafraichirAccueil(); };
+  r.appendChild(b1); r.appendChild(b2); b.appendChild(r);
+}
+(function(){
+  var bs=document.querySelectorAll("[data-choix]");
+  for(var i=0;i<bs.length;i++){
+    (function(el){ el.onclick=function(){ repondreEtEst(el.getAttribute("data-choix")); }; })(bs[i]);
+  }
+})();
+
+/* =========================================================
+   Accueil : entrées et état
+   ========================================================= */
+function rafraichirAccueil(){
+  var n=motsChoisis().length;
+  $("etat-mots").firstChild.nodeValue = n===MOTS.length ? (MOTS.length+" mots") : (n+" mots sur "+MOTS.length);
+  var dern=Memoire.lire("dernierMots",null);
+  if(dern) $("etat-mots").firstChild.nodeValue += " · dernière fois : "+dern.erreurs+" erreur"+(dern.erreurs>1?"s":"");
+  var lt=tablesActives.slice().sort(function(a,b){return a-b;});
+  $("etat-tables").firstChild.nodeValue = "tables "+lt.join(", ")+" · "+(lt.length*10)+" calculs";
+}
+$("vers-mots").onclick=function(){ montrer("ecran-mots"); demarrerMots(); dire(fileMots.courant().m,0.85); };
+$("vers-tables").onclick=function(){ montrer("ecran-tables"); demarrerTables(); };
+$("vers-etest").onclick=function(){ montrer("ecran-etest"); demarrerEtEst(); };
+
+construireCategories();
+construireTables();
+rafraichirAccueil();
+montrer("ecran-accueil");
 
 })();
 </script>

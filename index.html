@@ -107,6 +107,11 @@ textarea{
   font-family:"Nunito",sans-serif;font-size:18px;width:100%;min-height:150px;line-height:30px;
   border:3px dashed var(--encre);border-radius:14px;padding:10px 12px;background:transparent;
 }
+select.voix{
+  width:100%;font-family:"Baloo 2",sans-serif;font-weight:600;font-size:18px;color:var(--encre);
+  background:var(--papier);border:3px solid var(--encre);border-radius:14px;padding:12px 14px;
+  min-height:52px;box-shadow:3px 3px 0 var(--encre);
+}
 label.champ{display:block;font-size:14px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--encre-pale);margin:18px 0 4px}
 
 .accents{display:flex;flex-wrap:wrap;margin:10px -4px 0}
@@ -194,6 +199,13 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
       <button type="button" id="partager-listes">Envoyer sur l'iPad</button>
     </div>
     <p class="indice" style="margin-top:12px">Les listes restent enregistrées sur cet appareil. « Envoyer sur l'iPad » fabrique un lien qui contient les listes : ouvre-le sur l'iPad et elles s'y ajoutent.</p>
+
+    <h2>Voix de la dictée</h2>
+    <select id="choix-voix" class="voix"><option>Recherche des voix…</option></select>
+    <div class="rangee" style="margin-top:10px">
+      <button type="button" id="essai-voix">🔊 Écouter un essai</button>
+    </div>
+    <p class="indice" id="conseil-voix" style="margin-top:12px">Pour une voix plus naturelle sur l'iPad : Réglages → Général → Accessibilité → Parole → Voix → Français, puis télécharger la version « Améliorée » d'Audrey, Aurélie ou Thomas. Elle apparaît ensuite dans cette liste.</p>
   </div>
 </section>
 
@@ -510,20 +522,50 @@ $("supprimer-liste").onclick=function(){
 /* =====================================================================
    Voix (iOS : la lecture doit partir d'un appui)
    ===================================================================== */
-var tts=("speechSynthesis" in window), voixFr=null;
+var tts=("speechSynthesis" in window), voixFr=null, voixDispo=[];
+/* Les voix les plus naturelles d'abord ; « compact » désigne les versions robotiques d'iOS. */
+var VOIX_PREFEREES=["audrey","aurélie","aurelie","amélie","amelie","thomas","google français","virginie","julie","céline","celine"];
+function scoreVoix(v){
+  var nom=(v.name||"").toLowerCase(), i, sc=0;
+  for(i=0;i<VOIX_PREFEREES.length;i++) if(nom.indexOf(VOIX_PREFEREES[i])>=0){ sc=100-i; break; }
+  if(/enhanced|premium|améliorée|amelioree/.test(nom)) sc+=50;
+  if(/compact/.test(nom)) sc-=50;
+  if(/^fr[-_]FR/i.test(v.lang)) sc+=10;
+  return sc;
+}
 function choisirVoix(){
   if(!tts) return;
-  var v=[];
+  var v=[],i;
   try{ v=window.speechSynthesis.getVoices()||[]; }catch(e){}
-  var exacte=null,large=null,i;
-  for(i=0;i<v.length;i++){
-    if(!exacte && /^fr[-_]FR/i.test(v[i].lang)) exacte=v[i];
-    if(!large && /^fr/i.test(v[i].lang)) large=v[i];
-  }
-  voixFr=exacte||large||null;
+  voixDispo=[];
+  for(i=0;i<v.length;i++) if(/^fr/i.test(v[i].lang)) voixDispo.push(v[i]);
+  voixDispo.sort(function(a,b){ return scoreVoix(b)-scoreVoix(a); });
+  var voulue=Memoire.lire("voix",null), trouvee=null;
+  if(voulue) for(i=0;i<voixDispo.length;i++) if(voixDispo[i].name===voulue) trouvee=voixDispo[i];
+  voixFr=trouvee||voixDispo[0]||null;
+  dessinerChoixVoix();
   if(v.length && !voixFr) alerteVoix("Aucune voix française sur cet appareil : la dictée ne peut pas être lue. Sur iPad, vérifie Réglages → Général → Accessibilité → Parole → Voix.");
   else alerteVoix(null);
 }
+function dessinerChoixVoix(){
+  var sel=$("choix-voix"); vider(sel);
+  if(!voixDispo.length){
+    var o=creer("option",null,"Aucune voix française trouvée"); sel.appendChild(o); sel.disabled=true; return;
+  }
+  sel.disabled=false;
+  for(var i=0;i<voixDispo.length;i++){
+    var opt=creer("option",null,voixDispo[i].name+" ("+voixDispo[i].lang+")");
+    opt.value=voixDispo[i].name;
+    if(voixFr && voixDispo[i].name===voixFr.name) opt.selected=true;
+    sel.appendChild(opt);
+  }
+}
+$("choix-voix").onchange=function(){
+  for(var i=0;i<voixDispo.length;i++) if(voixDispo[i].name===this.value) voixFr=voixDispo[i];
+  Memoire.ecrire("voix",this.value);
+  dire("une récompense",0.85);
+};
+$("essai-voix").onclick=function(){ dire("Un chimpanzé franchit le ruisseau avec un bâton.",0.85); };
 function alerteVoix(msg){
   var b=$("alerte-voix");
   if(!msg){ b.hidden=true; return; }
@@ -771,7 +813,7 @@ function terminerDictee(){
   });
 }
 $("ecouter").onclick=function(){ dire(fileMots.courant().m,0.85); };
-$("ecouter-lent").onclick=function(){ dire(fileMots.courant().m,0.5); };
+$("ecouter-lent").onclick=function(){ dire(fileMots.courant().m,0.6); };
 $("verifier-mot").onclick=verifierMot;
 $("saisie-mot").onkeydown=function(e){ if(e.key==="Enter"||e.keyCode===13){ e.preventDefault(); verifierMot(); } };
 

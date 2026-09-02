@@ -166,6 +166,10 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
   display:inline-block;margin-top:9px;background:var(--ok);color:#fff;font-family:"Nunito",sans-serif;
   font-weight:700;font-size:14px;padding:5px 11px;border-radius:999px;
 }
+.reprise{
+  display:inline-block;margin-top:9px;background:var(--crayon);color:#3A2A05;font-family:"Nunito",sans-serif;
+  font-weight:700;font-size:14px;padding:5px 11px;border-radius:999px;
+}
 .seance{
   display:flex;align-items:center;padding:12px 0;border-bottom:2px solid var(--seyes);
 }
@@ -206,9 +210,9 @@ input.chiffre{text-align:center;font-size:40px;max-width:220px;margin:0 auto;dis
   <h1 id="titre-accueil">Cahier de révisions</h1>
   <p class="sous">Choisis ce que tu veux réviser.</p>
 
-  <button class="grand plein" type="button" id="go-dictee">Dictée de mots<small>J'écoute le mot, je l'écris. Un mot raté revient jusqu'à ce qu'il soit juste.</small><span class="fait" id="fait-dictee" hidden></span></button>
-  <button class="grand" type="button" id="go-tables">Tables de multiplication<small>Je choisis mes tables. Un calcul raté revient aussi.</small><span class="fait" id="fait-tables" hidden></span></button>
-  <button class="grand" type="button" id="go-etest">et / est<small>Le « Revoir » de la fiche : 8 phrases à trou.</small><span class="fait" id="fait-etest" hidden></span></button>
+  <button class="grand plein" type="button" id="go-dictee">Dictée de mots<small>J'écoute le mot, je l'écris. Un mot raté revient jusqu'à ce qu'il soit juste.</small><span class="fait" id="fait-dictee" hidden></span><span class="reprise" id="reprise-dictee" hidden></span></button>
+  <button class="grand" type="button" id="go-tables">Tables de multiplication<small>Je choisis mes tables. Un calcul raté revient aussi.</small><span class="fait" id="fait-tables" hidden></span><span class="reprise" id="reprise-tables" hidden></span></button>
+  <button class="grand" type="button" id="go-etest">et / est<small>Le « Revoir » de la fiche : 8 phrases à trou.</small><span class="fait" id="fait-etest" hidden></span><span class="reprise" id="reprise-etest" hidden></span></button>
 
   <div id="carnet" hidden>
     <h2>Mon carnet</h2>
@@ -262,7 +266,7 @@ franchir" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck=
 
 <!-- ================= DICTÉE ================= -->
 <section class="ecran" id="ec-dictee" hidden>
-  <button class="fantome" type="button" data-retour>‹ Arrêter</button>
+  <button class="fantome" type="button" data-retour>‹ Accueil</button>
   <div class="avancee" id="avancee-dictee">Mot 1</div>
   <div class="jauge"><i id="jauge-dictee"></i></div>
   <div id="alerte-voix" class="alerte" hidden></div>
@@ -289,6 +293,10 @@ franchir" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck=
     <h2 style="font-size:19px">Ce que je révise</h2>
     <div class="puces" id="puces-categories"></div>
   </div>
+  <div class="rangee" style="margin-top:22px">
+    <button class="fantome" type="button" id="recommencer-dictee">↺ Recommencer la liste depuis le début</button>
+    <button class="fantome" type="button" id="changer-liste" hidden>Changer de liste</button>
+  </div>
 </section>
 
 <!-- ================= TABLES : CHOIX ================= -->
@@ -303,7 +311,7 @@ franchir" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck=
 
 <!-- ================= TABLES : JEU ================= -->
 <section class="ecran" id="ec-tables" hidden>
-  <button class="fantome" type="button" data-retour>‹ Arrêter</button>
+  <button class="fantome" type="button" data-retour>‹ Accueil</button>
   <div class="avancee" id="avancee-tables">0 sur 0</div>
   <div class="jauge"><i id="jauge-tables"></i></div>
   <div class="carte" id="carte-tables">
@@ -315,11 +323,14 @@ franchir" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck=
       <button class="plein" type="button" id="verifier-calcul">Vérifier</button>
     </div>
   </div>
+  <div class="rangee" style="margin-top:22px">
+    <button class="fantome" type="button" id="recommencer-tables">↺ Recommencer ou changer de tables</button>
+  </div>
 </section>
 
 <!-- ================= ET / EST ================= -->
 <section class="ecran" id="ec-etest" hidden>
-  <button class="fantome" type="button" data-retour>‹ Arrêter</button>
+  <button class="fantome" type="button" data-retour>‹ Accueil</button>
   <div class="avancee" id="avancee-etest">0 sur 8</div>
   <div class="jauge"><i id="jauge-etest"></i></div>
   <div class="carte" id="carte-etest">
@@ -681,8 +692,19 @@ function File(items){
   this.file=melanger(items.slice());
   this.total=items.length;
   this.reussis=0; this.erreurs=0; this.rates={};
-  this.debut=(new Date()).getTime();
+  this.ecoule=0; this.depuis=(new Date()).getTime();
 }
+/* Sauvegarde / reprise : ce qu'il faut pour continuer après un rechargement */
+File.prototype.etat=function(){
+  return {file:this.file,total:this.total,reussis:this.reussis,erreurs:this.erreurs,
+    rates:this.rates,ecoule:this.secondes(),rejeu:!!this.rejeu};
+};
+File.depuis=function(e){
+  var f=new File([]);
+  f.file=e.file||[]; f.total=e.total||f.file.length; f.reussis=e.reussis||0; f.erreurs=e.erreurs||0;
+  f.rates=e.rates||{}; f.ecoule=e.ecoule||0; f.depuis=(new Date()).getTime(); f.rejeu=!!e.rejeu;
+  return f;
+};
 File.prototype.courant=function(){ return this.file[0]; };
 File.prototype.juste=function(){ this.file.shift(); this.reussis++; return this.file.length===0; };
 File.prototype.faux=function(cle){
@@ -695,7 +717,28 @@ File.prototype.listeRates=function(){
   for(k in this.rates) if(this.rates.hasOwnProperty(k)) r.push(k);
   return r;
 };
-File.prototype.secondes=function(){ return Math.round(((new Date()).getTime()-this.debut)/1000); };
+File.prototype.secondes=function(){ return Math.round(this.ecoule+((new Date()).getTime()-this.depuis)/1000); };
+
+/* Séries en cours, enregistrées sur l'appareil à chaque réponse */
+function sauverEnCours(cle,donnees){
+  var ec=Memoire.lire("enCours",{})||{};
+  if(donnees) ec[cle]=donnees; else delete ec[cle];
+  Memoire.ecrire("enCours",ec);
+}
+function lireEnCours(cle){
+  var ec=Memoire.lire("enCours",{})||{};
+  return ec[cle]||null;
+}
+function dessinerReprises(){
+  var d=lireEnCours("dictee"), t=lireEnCours("tables"), e=lireEnCours("etest");
+  var bd=$("reprise-dictee"), bt=$("reprise-tables"), be=$("reprise-etest");
+  if(d && d.etat && d.etat.file.length){ texte(bd,"▶ Reprendre : "+d.etat.reussis+" mot"+(d.etat.reussis>1?"s":"")+" sur "+d.etat.total+" déjà réussi"+(d.etat.reussis>1?"s":"")); bd.hidden=false; }
+  else bd.hidden=true;
+  if(t && t.etat && t.etat.file.length){ texte(bt,"▶ Reprendre : "+t.etat.reussis+" sur "+t.etat.total+" calculs"); bt.hidden=false; }
+  else bt.hidden=true;
+  if(e && e.etat && e.etat.file.length){ texte(be,"▶ Reprendre : "+e.etat.reussis+" sur "+e.etat.total+" phrases"); be.hidden=false; }
+  else be.hidden=true;
+}
 
 /* =====================================================================
    Carnet des séances terminées (pour montrer aux parents)
@@ -732,6 +775,7 @@ function tablesFaitesAujourdhui(){
   return faites.sort(function(a,b){return a-b;});
 }
 function dessinerCarnet(){
+  dessinerReprises();
   var carnet=Memoire.lire("carnet",[]), i, e, aujourdhui=cleJour(new Date());
   var derniers={dictee:null,tables:null,etest:null};
   for(i=0;i<carnet.length;i++){
@@ -825,7 +869,51 @@ function motsDe(liste){
     if(!liste.mots[i].c || categoriesActives.indexOf(liste.mots[i].c)>=0) r.push(liste.mots[i]);
   return r.length?r:liste.mots.slice();
 }
+function sauverDictee(){
+  if(fileMots && fileMots.file.length && listeCourante)
+    sauverEnCours("dictee",{listeId:listeCourante.id,categories:categoriesActives,etat:fileMots.etat()});
+  else sauverEnCours("dictee",null);
+}
+function reprendreDictee(){
+  var enCours=lireEnCours("dictee");
+  if(!enCours || !enCours.etat || !enCours.etat.file.length) return false;
+  var liste=null,i;
+  for(i=0;i<listes.length;i++) if(listes[i].id===enCours.listeId) liste=listes[i];
+  if(!liste){ sauverEnCours("dictee",null); return false; }
+  listeCourante=liste;
+  var cats=categoriesDe(liste);
+  categoriesActives = cats.length ? (enCours.categories||cats.slice()) : null;
+  construireCategories(cats);
+  $("changer-liste").hidden=(listes.length<2);
+  fileMots=File.depuis(enCours.etat);
+  ecran("ec-dictee");
+  afficherMot(false);
+  dire(fileMots.courant().m,0.85);
+  return true;
+}
+function choisirListe(){
+  var box=$("choix-liste-items"); vider(box);
+  for(var i=0;i<listes.length;i++){
+    (function(l){
+      var b=creer("button","grand"); b.type="button";
+      b.appendChild(document.createTextNode(l.nom));
+      b.appendChild(creer("small",null,l.mots.length+" mots"));
+      b.onclick=function(){ demarrerDictee(l); };
+      box.appendChild(b);
+    })(listes[i]);
+  }
+  ecran("ec-choix-liste");
+}
+$("recommencer-dictee").onclick=function(){
+  if(!window.confirm("Recommencer cette liste depuis le début ?")) return;
+  sauverEnCours("dictee",null); demarrerDictee(listeCourante);
+};
+$("changer-liste").onclick=function(){
+  if(!window.confirm("Abandonner la série en cours et changer de liste ?")) return;
+  sauverEnCours("dictee",null); choisirListe();
+};
 $("go-dictee").onclick=function(){
+  if(reprendreDictee()) return;
   if(listes.length===1){ demarrerDictee(listes[0]); return; }
   var box=$("choix-liste-items"); vider(box);
   for(var i=0;i<listes.length;i++){
@@ -841,6 +929,7 @@ $("go-dictee").onclick=function(){
 };
 function demarrerDictee(liste){
   listeCourante=liste;
+  $("changer-liste").hidden=(listes.length<2);
   var cats=categoriesDe(liste);
   categoriesActives = cats.length ? (categoriesActives||cats.slice()) : null;
   if(cats.length){
@@ -853,6 +942,7 @@ function demarrerDictee(liste){
 }
 function lancerDictee(mots){
   fileMots=new File(mots);
+  sauverDictee();
   ecran("ec-dictee");
   afficherMot(false);
   dire(fileMots.courant().m,0.85);
@@ -919,6 +1009,7 @@ function verifierMot(){
     d.appendChild(ligne("Ça s'écrit :",ops,"attendu"));
     fileMots.faux(mot.m);
   }
+  sauverDictee();
   majDictee();
   if(fini){ terminerDictee(); return; }
   texte($("verifier-mot"), ok?"Mot suivant ›":"Je continue ›");
@@ -932,7 +1023,7 @@ function terminerDictee(){
       for(j=0;j<listeCourante.mots.length;j++)
         if(listeCourante.mots[j].m===rates[i]) mots.push(listeCourante.mots[j]);
     if(!mots.length) return;
-    lancerDictee(mots); fileMots.rejeu=true;
+    lancerDictee(mots); fileMots.rejeu=true; sauverDictee();
   },seance);
 }
 $("ecouter").onclick=function(){ dire(fileMots.courant().m,0.85); };
@@ -969,7 +1060,24 @@ var tablesChoisies=Memoire.lire("tables",[2,3,4,5]);
 if(!tablesChoisies||!tablesChoisies.length) tablesChoisies=[2,3,4,5];
 var fileCalculs=null, calculCorrige=false;
 
-$("go-tables").onclick=function(){ construireTables(); ecran("ec-tables-choix"); };
+function sauverTables(){
+  if(fileCalculs && fileCalculs.file.length) sauverEnCours("tables",{tables:tablesChoisies.slice(),etat:fileCalculs.etat()});
+  else sauverEnCours("tables",null);
+}
+function reprendreTables(){
+  var enCours=lireEnCours("tables");
+  if(!enCours || !enCours.etat || !enCours.etat.file.length) return false;
+  if(enCours.tables && enCours.tables.length) tablesChoisies=enCours.tables.slice();
+  fileCalculs=File.depuis(enCours.etat);
+  ecran("ec-tables");
+  afficherCalcul();
+  return true;
+}
+$("recommencer-tables").onclick=function(){
+  if(!window.confirm("Abandonner la série en cours ?")) return;
+  sauverEnCours("tables",null); construireTables(); ecran("ec-tables-choix");
+};
+$("go-tables").onclick=function(){ if(reprendreTables()) return; construireTables(); ecran("ec-tables-choix"); };
 function construireTables(){
   var z=$("puces-tables"); vider(z);
   var faites=tablesFaitesAujourdhui();
@@ -1001,6 +1109,7 @@ $("lancer-tables").onclick=function(){
 };
 function lancerTables(liste){
   fileCalculs=new File(liste);
+  sauverTables();
   ecran("ec-tables");
   afficherCalcul();
 }
@@ -1039,6 +1148,7 @@ function verifierCalcul(){
     $("retour-tables").className="retour mal";
     fileCalculs.faux(q.a+" × "+q.b);
   }
+  sauverTables();
   $("retour-tables").style.textAlign="center";
   majTables();
   if(fini){
@@ -1050,7 +1160,7 @@ function verifierCalcul(){
         p=rates[i].split(" × ");
         liste.push({a:Number(p[0]),b:Number(p[1])});
       }
-      lancerTables(liste); fileCalculs.rejeu=true;
+      lancerTables(liste); fileCalculs.rejeu=true; sauverTables();
     },seance);
     return;
   }
@@ -1074,8 +1184,14 @@ var ET_EST=[
  {avant:"Elle invente",apres:"fabrique un outil.",r:"et"}
 ];
 var fileEtEst=null, etestCorrige=false;
+function sauverEtEst(){
+  if(fileEtEst && fileEtEst.file.length) sauverEnCours("etest",{etat:fileEtEst.etat()});
+  else sauverEnCours("etest",null);
+}
 $("go-etest").onclick=function(){
-  fileEtEst=new File(ET_EST.slice());
+  var enCours=lireEnCours("etest");
+  if(enCours && enCours.etat && enCours.etat.file.length) fileEtEst=File.depuis(enCours.etat);
+  else { fileEtEst=new File(ET_EST.slice()); sauverEtEst(); }
   ecran("ec-etest");
   afficherEtEst();
 };
@@ -1120,6 +1236,7 @@ function repondreEtEst(choix){
       : "On peut dire : « "+q.avant+" et puis "+q.apres+" »."));
     fileEtEst.faux(q.avant+" …");
   }
+  sauverEtEst();
   majEtEst();
   if(fini){ resultat("et / est : c'est acquis !",fileEtEst,"phrases",null,{type:"etest",nom:""}); return; }
   var b=creer("button","plein",ok?"Phrase suivante ›":"Je continue ›");

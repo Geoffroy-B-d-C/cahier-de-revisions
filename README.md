@@ -71,6 +71,16 @@ s'affiche sur le bouton de l'exercice, pour que l'élève puisse montrer que c'e
 fait. Le carnet garde les 40 dernières séances ; « Effacer le carnet » dans la zone
 des parents le vide. Un rejeu des mots ratés n'est pas compté comme une séance.
 
+## Reprise d'une série interrompue
+
+Sur l'iPad Air 1, iOS recharge souvent la page dès qu'on change d'app. La série en
+cours (dictée, tables, et / est) est donc enregistrée à chaque réponse dans le
+`localStorage` (clé `enCours`) : file restante, réussis, erreurs, temps écoulé. Au
+retour, le bouton de l'exercice affiche « ▶ Reprendre : 12 mots sur 41 déjà
+réussis » et rouvre la série là où elle en était. « ‹ Accueil » ne perd rien.
+Sur l'écran de l'exercice, « Recommencer » (et « Changer de liste » pour la
+dictée, s'il y a plusieurs listes) abandonne la série après confirmation.
+
 ## Mettre la page sur l'iPad
 
 GitHub Pages est actif sur `main` : <https://geoffroy-b-d-c.github.io/cahier-de-revisions/>
